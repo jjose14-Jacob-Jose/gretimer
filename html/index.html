@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Countdown Timers</title>
+	</head>
+
+	<body onload="testFunction()">
+		<script type="text/javascript" src="../scripts/webTimerScripts.js"></script>
+		<link rel = "stylesheet"    type = "text/css"    href = "../css/web-countdown-timer-styles.css" />
+		
+		<div id="div_mainTimer">
+		</div>
+		
+		<div id="div_runningTimers">
+			<input type="button" id="btn_StartTimers" value="Start" onClick="startTimers()">
+			<input type="button" id="btn_PauseTimers" value="Pause">
+			<input type="button" id="btn_ResetTimers" value="Reset">
+			
+			<table id="tbl_timersRunning">
+				<tr>
+					<th>#</th>
+					<th>Original </th>
+					<th>Remaining</th>				
+				</tr>	
+				<tr>
+					<td>1</td>
+					<td>02:00 </td>
+					<td>01:30:30</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>02:00 </td>
+					<td>01:30:30</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id="div_totalNumberOfTimers">
+			<label id="lbl_totalNumberOfTimers" for="txt_totalNumberOfTimers">Total number of Timers:</label>
+			<input type="number" id="txt_totalNumberOfTimers">
+			<input type="button" id="btn_loadTotalNumberOfTimers" value="Load" onclick="addTotalNumberOfTimers()">
+		</div>
+		
+		<div id="div_totalNumberOfTimerTypes">
+			<label id="lbl_totalNumberOfTimerTypes" for="txt_totalNumberOfTimerTypes">Total number of Timer Types:</label>
+			<input type="number" id="txt_totalNumberOfTimerTypes">
+			<input type="button" id="btn_loadTotalNumberOfTimerTypes" value="Load" onclick="addTotalNumberOfTimerTypes()">
+		</div>
+		
+		<div id="div_timerTypeConfiguration">
+
+		</div>
+		
+		<div id="div_timersConfiguration">
+
+		</div>
+		<input type="button" id="btn_loadTimer" value="Load Timers" onclick="loadSpecifiedTimerToTable()">
+		
+		<div id="div_test_Area">
+			<p id="p_test_1"></p>
+			<hr/>
+			
+			<p id="p_test_2"></p>
+			<hr/>
+			
+			<p id="p_test_3"></p>
+			<hr/>
+			
+			<p id="p_test_4"></p>
+			<hr/>
+			
+			<p id="p_test_5"></p>
+			<hr/>
+		</div>
+		
+
+		
+	</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

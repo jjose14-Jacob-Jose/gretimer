@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+	p {
+	  text-align: center;
+	  font-size: 60px;
+	  margin-top: 0px;
+	}
+	</style>
+	
+</head>
+<body>
+	
+
+
+	<p id="demo"></p>
+	<script type="text/javascript" src="scripts/webTimerScripts.js"></script>
+	
+	<div id="div_Timers">
+	
+	<label id="lbl_timer_1_minutes_left"></label>
+	<label id="lbl_timer_2_minutes_left"></label>
+	<label id="lbl_timer_3_minutes_left"></label>
+	<label id="lbl_timer_4_minutes_left"></label>
+	<label id="lbl_timer_5_minutes_left"></label>
+	<label id="lbl_timer_6_minutes_left"></label>
+	<label id="lbl_timer_7_minutes_left"></label>
+	<label id="lbl_timer_8_minutes_left"></label>
+	<label id="lbl_timer_9_minutes_left"></label>
+	<label id="lbl_timer_10_minutes_left"></label>
+
+	
+	</div>
+
+	<div id="div_UserInput">
+		<label id="lbl_timer_1_minutes_scheduled">Timer 1 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_1_minutes" onClick="this.select();" >
+		
+		<input type="radio" id="rb_timer_1_type_AWA" name="timer_1_type" value="30" checked="checked" >
+		<label for="rb_timer_1_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_1_type_Verbal" name="timer_1_type" value="30">
+		<label for="rb_timer_1_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_1_type_Quant" name="timer_1_type" value="45">
+		<label for="rb_timer_1_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_1_type_Analytical" name="timer_1_type" value="60">
+		<label for="rb_timer_1_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_1_type_Research" name="timer_1_type" value="45">
+		<label for="rb_timer_1_type_Research">Reseach</label>
+				
+		<br>
+		
+		<label id="lbl_timer_2_minutes_scheduled">Timer 2 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_2_minutes">
+		
+		<input type="radio" id="rb_timer_2_type_AWA" name="timer_2_type" value="30" checked="checked" >
+		<label for="rb_timer_2_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_2_type_Verbal" name="timer_2_type" value="30">
+		<label for="rb_timer_2_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_2_type_Quant" name="timer_2_type" value="45">
+		<label for="rb_timer_2_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_2_type_Analytical" name="timer_2_type" value="60">
+		<label for="rb_timer_2_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_2_type_Research" name="timer_2_type" value="45">
+		<label for="rb_timer_2_type_Research">Reseach</label>
+		
+		<br>
+		
+		<label id="lbl_timer_3_minutes_scheduled">Timer 3 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_3_minutes" onClick="this.select();" >
+		
+		<input type="radio" id="rb_timer_3_type_AWA" name="timer_3_type" value="30" >
+		<label for="rb_timer_3_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_3_type_Verbal" name="timer_3_type" value="30" checked="checked" >
+		<label for="rb_timer_3_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_3_type_Quant" name="timer_3_type" value="45">
+		<label for="rb_timer_3_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_3_type_Analytical" name="timer_3_type" value="60">
+		<label for="rb_timer_3_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_3_type_Research" name="timer_1_type" value="45">
+		<label for="rb_timer_3_type_Research">Reseach</label>
+		
+		<br>
+		
+		<label id="lbl_timer_4_minutes_scheduled">Timer 4 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_4_minutes" onClick="this.select();" >
+		
+		<input type="radio" id="rb_timer_4_type_AWA" name="timer_4_type" value="30">
+		<label for="rb_timer_4_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_4_type_Verbal" name="timer_4_type" value="30" checked="checked" >
+		<label for="rb_timer_4_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_4_type_Quant" name="timer_4_type" value="45">
+		<label for="rb_timer_4_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_4_type_Analytical" name="timer_4_type" value="60">
+		<label for="rb_timer_4_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_4_type_Research" name="timer_4_type" value="45">
+		<label for="rb_timer_4_type_Research">Reseach</label>
+		
+		<br>
+		
+		<label id="lbl_timer_5_minutes_scheduled">Timer 5 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_5_minutes" onClick="this.select();" >
+			
+		<input type="radio" id="rb_timer_5_type_AWA" name="timer_5_type" value="30">
+		<label for="rb_timer_5_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_5_type_Verbal" name="timer_5_type" value="30" checked="checked" >
+		<label for="rb_timer_5_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_5_type_Quant" name="timer_5_type" value="45">
+		<label for="rb_timer_5_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_5_type_Analytical" name="timer_5_type" value="60">
+		<label for="rb_timer_5_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_5_type_Research" name="timer_5_type" value="45">
+		<label for="rb_timer_5_type_Research">Reseach</label>
+		
+		<br>
+		
+		<label id="lbl_timer_6_minutes_scheduled">Timer 6 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_6_minutes" onClick="this.select();" >
+		
+		<input type="radio" id="rb_timer_6_type_AWA" name="timer_6_type" value="30">
+		<label for="rb_timer_6_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_6_type_Verbal" name="timer_6_type" value="30" checked="checked" >
+		<label for="rb_timer_6_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_6_type_Quant" name="timer_6_type" value="45">
+		<label for="rb_timer_6_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_6_type_Analytical" name="timer_6_type" value="60">
+		<label for="rb_timer_6_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_6_type_Research" name="timer_6_type" value="45">
+		<label for="rb_timer_6_type_Research">Reseach</label>
+		
+		<br>
+		
+		<label id="lbl_timer_7_minutes_scheduled">Timer 7 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_7_minutes" onClick="this.select();" >	
+		
+		<input type="radio" id="rb_timer_7_type_AWA" name="timer_7_type" value="30">
+		<label for="rb_timer_7_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_7_type_Verbal" name="timer_7_type" value="30">
+		<label for="rb_timer_7_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_7_type_Quant" name="timer_7_type" value="45">
+		<label for="rb_timer_7_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_7_type_Analytical" name="timer_7_type" value="60">
+		<label for="rb_timer_7_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_7_type_Research" name="timer_7_type" value="45">
+		<label for="rb_timer_7_type_Research">Reseach</label>
+		
+		<br>
+		
+		<label id="lbl_timer_8_minutes_scheduled">Timer 8 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_8_minutes" onClick="this.select();" >
+		
+				
+		<input type="radio" id="rb_timer_8_type_AWA" name="timer_8_type" value="30">
+		<label for="rb_timer_8_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_8_type_Verbal" name="timer_8_type" value="30" >
+		<label for="rb_timer_8_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_8_type_Quant" name="timer_8_type" value="45">
+		<label for="rb_timer_8_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_8_type_Analytical" name="timer_8_type" value="60">
+		<label for="rb_timer_8_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_8_type_Research" name="timer_8_type" value="45">
+		<label for="rb_timer_8_type_Research">Reseach</label>
+		
+		
+		<br>
+		
+		<label id="lbl_timer_9_minutes_scheduled">Timer 9 Minutes:&nbsp &nbsp </label>
+		<input type="text" id="txt_timer_9_minutes" onClick="this.select();" >
+		
+				
+		<input type="radio" id="rb_timer_9_type_AWA" name="timer_9_type" value="30">
+		<label for="rb_timer_9_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_9_type_Verbal" name="timer_9_type" value="30" >
+		<label for="rb_timer_9_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_9_type_Quant" name="timer_9_type" value="45">
+		<label for="rb_timer_9_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_9_type_Analytical" name="timer_9_type" value="60">
+		<label for="rb_timer_9_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_9_type_Research" name="timer_9_type" value="45">
+		<label for="rb_timer_9_type_Research">Reseach</label>
+		
+		
+		<br>
+		
+		<label id="lbl_timer_10_minutes_scheduled">Timer 10 Minutes:&nbsp </label>
+		<input type="text" id="txt_timer_10_minutes" onClick="this.select();" >
+		
+				
+		<input type="radio" id="rb_timer_10_type_AWA" name="timer_10_type" value="30">
+		<label for="rb_timer_10_type_AWA">AWA</label>
+		<input type="radio" id="rb_timer_10_type_Verbal" name="timer_10_type" value="30">
+		<label for="rb_timer_10_type_Verbal">Verbal</label>
+		<input type="radio" id="rb_timer_10_type_Quant" name="timer_10_type" value="45">
+		<label for="rb_timer_10_type_Quant">Quant</label>
+		<input type="radio" id="rb_timer_10_type_Analytical" name="timer_10_type" value="60">
+		<label for="rb_timer_10_type_Analytical">Analytical</label>
+		<input type="radio" id="rb_timer_10_type_Research" name="timer_10_type" value="45">
+		<label for="rb_timer_10_type_Research">Reseach</label>
+		 
+		<br>
+		
+		</div>
+		
+	<div id="div_Buttons">	
+		<input type="button" id="btn_Clear_Timers" value="Clear All Timers" onclick="clearAllTimers()">
+		<input type="button" id="btn_Load_Default_Timer_Value" value="Load Default Times" onClick="loadDefaultValues()">
+		<br>
+		<br>
+		
+		<input type="button" id="btn_Start_Timer" value="Start Timer" onClick="startTimers()">
+		<input type="button" id="btn_Pause_Timer" value="Pause Timer">
+		
+	</div>
+
+
+	<script>
+	/*
+
+		Got the follow code from W3Schools.com
+		URL: https://www.w3schools.com/howto/howto_js_countdown.asp;
+
+	*/
+
+
+
+
+	// Set the date we're counting down to
+	var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+
+	// Update the count down every 1 second
+	var x = setInterval(function() {
+
+	  // Get today's date and time
+	  var now = new Date().getTime();
+		
+	  // Find the distance between now and the count down date
+	  var distance = countDownDate - now;
+		
+	  // Time calculations for days, hours, minutes and seconds
+	  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+	  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+		
+	document.title = days + "d " + hours + "h "+ minutes + "m " + seconds + "s ";
+	  // Output the result in an element with id="demo"
+	  document.getElementById("demo").innerHTML = days + "d " + hours + "h "
+	  + minutes + "m " + seconds + "s ";
+		
+	  // If the count down is over, write some text 
+	  if (distance < 0) {
+		clearInterval(x);
+		document.getElementById("demo").innerHTML = "EXPIRED";
+	  }
+	}, 1000);
+	</script>
+
+	</body>
+</html>
