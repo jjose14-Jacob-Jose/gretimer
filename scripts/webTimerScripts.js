@@ -29,6 +29,7 @@ var CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME= 2;
 var CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS = 1000;
 
 var CONST_TIMER_COMPLETED_MESSAGE ="-";
+var CONST_CURRENT_TIMER_TABLE_ROW = 1;
 
 var Current_Running_Timer;
 
@@ -74,6 +75,7 @@ function createFunctionStringWithParameters(functionName, functionParameter1, fu
 	return functionString;
 	
 }
+
 function createTimerConfigurationEntry(index)
 {
 	
@@ -241,22 +243,20 @@ function stopCurrentRunningTimer()
     }
 }
 
-function startSingleTimer(remainingTime, timerTableIndex)
-{
-
-}
-
 function startTimers()
 {
 	var timersTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
-
-	for(i = 1; i<timersTable.rows.length && i<10; i++)
+    CONST_CURRENT_TIMER_TABLE_ROW = 1;
+//	for(i = 1; i<timersTable.rows.length && i<10; i++)
+    while(CONST_CURRENT_TIMER_TABLE_ROW<timersTable.rows.length)
 	{
-		var tableRow = timersTable.rows[i];
+		var tableRow = timersTable.rows[CONST_CURRENT_TIMER_TABLE_ROW];
 		var remainingTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
-		Current_Running_Timer = setTimeout(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
+//		Current_Running_Timer = setTimeout(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
+//		Current_Running_Timer = setInterval(runTimer(remainingTime,CONST_CURRENT_TIMER_TABLE_ROW),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
+		Current_Running_Timer = setTimeout(runTimer(remainingTime,CONST_CURRENT_TIMER_TABLE_ROW),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
+        alert("CURRENT row is  is :"+ CONST_CURRENT_TIMER_TABLE_ROW);
 
-		
 	}
 	
 	
@@ -338,36 +338,34 @@ function runTimer(remainingTime, tableRowIndex)
     var minutes = hhMMss[1];
     var seconds = hhMMss[2];
 
-//    if(hours>=0 && minutes>=0 && seconds>=0)
-//    {
+
+    var x = setInterval(function() {
+
+
         if(seconds>0)
         {
             seconds--;
         }
-        else if(seconds<=0 && minutes>0)
+        else if(minutes>0)
         {
             minutes--;
             seconds=59;
         }
-        else if(seconds<=0 && minutes<=0 && hours>0)
+        else if(hours>0)
         {
             hours--;
-            minutes = 59;
-            seconds = 59;
+            minutes =59;
+            seconds=59;
         }
-        else
-        {
-            stopCurrentRunningTimer();
-            return ;
-        }
-        hours = getTimeIn2DigitFormat(hours);
-        minutes = getTimeIn2DigitFormat(minutes);
-        seconds = getTimeIn2DigitFormat(seconds);
-
-        displayTimeInTable(hours + CONST_SYMBOL_FOR_TIME_SEPARATOR + minutes + CONST_SYMBOL_FOR_TIME_SEPARATOR + seconds, tableRowIndex);
-        alert(new Date())
-        alert(hours + CONST_SYMBOL_FOR_TIME_SEPARATOR + minutes + CONST_SYMBOL_FOR_TIME_SEPARATOR + seconds, tableRowIndex);
-//    }
+        var newTime = getTimeIn2DigitFormat(hours) + CONST_SYMBOL_FOR_TIME_SEPARATOR;
+        newTime = newTime.concat(getTimeIn2DigitFormat(minutes) + CONST_SYMBOL_FOR_TIME_SEPARATOR);
+        newTime = newTime.concat(getTimeIn2DigitFormat(seconds));
+        displayTimeInTable(newTime,tableRowIndex);
+//        alert(newTime);
+      document.getElementById("p_test_1").innerHTML = hours + "h "
+      + minutes + "m " + seconds + "s ";
+    }, CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
+    CONST_CURRENT_TIMER_TABLE_ROW++;
 
 }
 
