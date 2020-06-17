@@ -6,6 +6,9 @@ var CONST_LBL_FOR_TIMER_TYPE_DESCRIPTION = "Timer Description";
 var CONST_LBL_FOR_TIMER_TYPE_VALUE = "Duration ";
 var CONST_LBL_FOR_TIMER_CONFIGURATION = "Timer";
 
+var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED = "Pause";
+var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_ENABLED = "Resume";
+
 var CONST_TYPE_FOR_TIMER_TYPE_DURATION = "number";
 var CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION = "text";
 
@@ -35,11 +38,13 @@ var CONST_CURRENT_TIMER_TABLE_ROW = 1;
 
 var CONST_FILE_PATH_SOUND_1 = "../resources/audio-Single-Bell.mp3";
 var CONST_FILE_PATH_SOUND_2 = "../resources/audio-Double-Bell.mp3";
+var CONST_FILE_PATH_SOUND_3 = "../resources/audio-Many-Bell.mp3";
 
 var Current_Timer_Table_Row = 1;
 
 var Current_Running_Timer = [];
-var Current_Status_Of_Pause_Is_Paused = true;
+var Current_Status_Of_Pause_Is_Paused_Enabled = false;
+var Current_Status_Of_Timer_Is_Timer_Running = false;
 
 function addTotalNumberOfTimers()
 {
@@ -171,7 +176,7 @@ function radioButtonChangeFunction(radioButtonName, radioButtonValue)
 
 function loadSpecifiedTimerToTable()
 {
-
+    Current_Status_Of_Timer_Is_Timer_Running = false;
 	var totalNumberOfTimers = document.getElementById("txt_totalNumberOfTimers").value;
 	var timers = [];
 	
@@ -206,7 +211,7 @@ function loadSpecifiedTimerToTable()
             var tableRowCell2 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME);
 
             tableRowCell0.innerHTML = (i+1);
-            tableRowCell1.innerHTML = convertMinutesIntoHHMMMSSFormat(timers[i]);
+            tableRowCell1.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]));
 
             if(i>0 && parseFloat(timers[i])>0)
                 tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]) + parseFloat(timers[i-1]));
@@ -257,9 +262,16 @@ function stopCurrentRunningTimer(intervalID)
 }
 function startTimers()
 {
+    if(Current_Status_Of_Pause_Is_Paused_Enabled)
+    {
+        togglePause();
+    }
+    else{
+    Current_Status_Of_Timer_Is_Timer_Running = true;
 	var timersTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
 //    CONST_CURRENT_TIMER_TABLE_ROW = 1;
-	for(i = 1; i<timersTable.rows.length; i++)
+    var i=0;
+	for(i = 1; i<timersTable.rows.length && isTableHavingValidTimerRemaining(); i++)
 	{
 		var tableRow = timersTable.rows[i];
 		var remainingTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
@@ -267,30 +279,8 @@ function startTimers()
 //		Current_Running_Timer = setInterval(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 
 	}
-	
-}
+	}
 
-
-function testFunction()
-{
-	document.getElementById("txt_totalNumberOfTimers").value = 2;
-	document.getElementById("txt_totalNumberOfTimerTypes").value = 3;
-	
-	addTotalNumberOfTimerTypes();
-
-	
-	document.getElementById("txt_timerType_Description_0").value = "Verbal";
-	document.getElementById("txt_timerType_Description_1").value = "Quant";
-	document.getElementById("txt_timerType_Description_2").value = "Writing";
-	
-	
-	document.getElementById("txt_timerType_Duration_0").value = 30;
-	document.getElementById("txt_timerType_Duration_1").value = 45;
-	document.getElementById("txt_timerType_Duration_2").value = 60;
-	
-	addTotalNumberOfTimers();
-//	startTimers();
-	
 }
 
 function test(itemsToBePrinted)
@@ -314,7 +304,7 @@ function runTimer(remainingTime, tableRowIndex)
 
     Current_Running_Timer[tableRowIndex] = setInterval(function()
     {
-        
+
         if(seconds>0)
         {
             seconds--;
@@ -338,6 +328,11 @@ function runTimer(remainingTime, tableRowIndex)
             stopCurrentRunningTimer(tableRowIndex);
         }
 
+        if(Current_Status_Of_Pause_Is_Paused_Enabled)
+        {
+            stopCurrentRunningTimer(tableRowIndex);
+        }
+
         var newTime = getTimeIn2DigitFormat(hours) + CONST_SYMBOL_FOR_TIME_SEPARATOR;
         newTime = newTime.concat(getTimeIn2DigitFormat(minutes) + CONST_SYMBOL_FOR_TIME_SEPARATOR);
         newTime = newTime.concat(getTimeIn2DigitFormat(seconds));
@@ -347,6 +342,7 @@ function runTimer(remainingTime, tableRowIndex)
     }, CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 //    CONST_CURRENT_TIMER_TABLE_ROW++;
 //    }
+
 }
 
 function getTimeIn2DigitFormat(time)
@@ -360,10 +356,8 @@ function getTimeIn2DigitFormat(time)
 
 function displayInTitle()
 {
-Current_Timer_Table_Row
 	var timersTableForDisplaying = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
 	var tableRowForDisplaying = timersTableForDisplaying.rows[Current_Timer_Table_Row];
-
     document.title = tableRowForDisplaying.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
 }
 
@@ -376,27 +370,101 @@ function playTimerEndedSound(timerTableRowIndex)
     else
         soundElement.src = CONST_FILE_PATH_SOUND_2;
 
+    if(!isTableHavingValidTimerRemaining())
+        soundElement.src = CONST_FILE_PATH_SOUND_3;
+
     document.body.appendChild(soundElement);
     soundElement.play();
 }
 
 function togglePause()
 {
-   if(Current_Status_Of_Pause_Is_Paused)
-        Current_Status_Of_Pause_Is_Paused = false;
+    if(Current_Status_Of_Timer_Is_Timer_Running)
+    {
+   if(Current_Status_Of_Pause_Is_Paused_Enabled)
+     {   Current_Status_Of_Pause_Is_Paused_Enabled = false;
+         document.getElementById("btn_PauseTimers").value = CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED;
+         startTimers();
+     }
         
    else
-        Current_Status_Of_Pause_Is_Paused = true;
-    
+    {    Current_Status_Of_Pause_Is_Paused_Enabled = true;
+         document.getElementById("btn_PauseTimers").value = CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_ENABLED;
+
+    }
+    }
 }
 
+function resetTimers()
+{
+
+    var timersTableReset = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
+    for(i_resetTimer=1; i_resetTimer<timersTableReset.rows.length; i_resetTimer++)
+    {
+        var tableRowReset = timersTableReset.rows[i_resetTimer];
+
+        tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
+
+        if(i_resetTimer>1)
+        {
+             var previousRow = timersTableReset.rows[i_resetTimer-1];
+             var PreviousRowRemainingTime = convertHHmmSSTimeToMinutes(previousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+
+             var currentRowRemainingTime =  convertHHmmSSTimeToMinutes(tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+             currentRowRemainingTime = currentRowRemainingTime + PreviousRowRemainingTime;
+             tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
+        }
+
+        tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
+
+    }
+}
+
+function convertHHmmSSTimeToMinutes(hhMMssTime)
+{
+    var hhMMss = hhMMssTime.split(CONST_SYMBOL_FOR_TIME_SEPARATOR);
+    var hours = parseInt(hhMMss[0])*60;
+    var minutes = parseInt(hhMMss[1]);
+    var seconds = parseFloat(hhMMss[2])/6;
+
+    return (hours + minutes + seconds);
+}
+
+function isTableHavingValidTimerRemaining()
+{
+
+    var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
+
+    for(i=1; i<timerTable.rows.length; i++)
+    {
+        var timerTableRow = timerTable.rows[i];
+        var currentRowRemainingTime =  convertHHmmSSTimeToMinutes(timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+
+        if(currentRowRemainingTime>0)
+            return true;
+    }
+
+    return false;
+}
+
+function testFunction()
+{
+	document.getElementById("txt_totalNumberOfTimers").value = 2;
+	document.getElementById("txt_totalNumberOfTimerTypes").value = 3;
+
+	addTotalNumberOfTimerTypes();
 
 
+	document.getElementById("txt_timerType_Description_0").value = "Verbal";
+	document.getElementById("txt_timerType_Description_1").value = "Quant";
+	document.getElementById("txt_timerType_Description_2").value = "Writing";
 
 
+	document.getElementById("txt_timerType_Duration_0").value = 30;
+	document.getElementById("txt_timerType_Duration_1").value = 45;
+	document.getElementById("txt_timerType_Duration_2").value = 60;
 
+	addTotalNumberOfTimers();
+//	startTimers();
 
-
-
-
-
+}
