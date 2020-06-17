@@ -11,6 +11,8 @@ var CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION = "text";
 
 var CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS = "div_timer_duration";
 
+var CONST_TEXT_FIELD_PREFIX= "txt_";
+
 var CONST_ID_FOR_RADIO_BUTTON_TYPE="radioButton_timerType";
 var CONST_ID_FOR_TIMERS_TABLE="tbl_timersRunning";
 
@@ -31,7 +33,13 @@ var CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS = 1000;
 var CONST_TIMER_COMPLETED_MESSAGE ="-";
 var CONST_CURRENT_TIMER_TABLE_ROW = 1;
 
-var Current_Running_Timer;
+var CONST_FILE_PATH_SOUND_1 = "../resources/audio-Single-Bell.mp3";
+var CONST_FILE_PATH_SOUND_2 = "../resources/audio-Double-Bell.mp3";
+
+var Current_Timer_Table_Row = 1;
+
+var Current_Running_Timer = [];
+var Current_Status_Of_Pause_Is_Paused = true;
 
 function addTotalNumberOfTimers()
 {
@@ -50,19 +58,19 @@ function addTotalNumberOfTimers()
 		
 }
 
-function createLabelTagWithIndex(index, cssClass, text)
+function createLabelTagWithIndex(index, cssClass, text, forRadioButtonID)
 {
-	var labelTag = "<label id=\"lbl_" + index + "_\" class=\"" + cssClass + "\" >" + text + "<\/label>"; 
+	var labelTag = "<label id=\"lbl_" + index + "\" class=\"" + cssClass + "\" for=\"" + forRadioButtonID + "\" >" + text + "</label>";
 	return (labelTag );
 }
 
 function createTextFieldTagWithIndex(index, cssClass, type, onChangeFunctionName, onChangeFunctionNameParamater1, onChangeFunctionNameParamater2)
 {
-	var inputTextFieldTag = "<input type=\""+ type + "\" id=\"txt_" + index + "\" class=\"" + cssClass + "\"";
+	var inputTextFieldTag = "<input type=\""+ type + "\" id=\"" + CONST_TEXT_FIELD_PREFIX + index + "\" class=\"" + cssClass + "\"";
 	inputTextFieldTag = inputTextFieldTag.concat(" onChange=\"");
 	inputTextFieldTag = inputTextFieldTag.concat(createFunctionStringWithParameters(onChangeFunctionName, onChangeFunctionNameParamater1, onChangeFunctionNameParamater2));
 	inputTextFieldTag = inputTextFieldTag.concat("\"");
-	inputTextFieldTag = inputTextFieldTag.concat(">");
+	inputTextFieldTag = inputTextFieldTag.concat(" onClick=\"this.select();\" >");
 	return (inputTextFieldTag);
 }
 
@@ -78,13 +86,11 @@ function createFunctionStringWithParameters(functionName, functionParameter1, fu
 
 function createTimerConfigurationEntry(index)
 {
+	var labelTag = createLabelTagWithIndex("timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_CONFIGURATION + " " + (index+1), "radioButton_" + CONST_LBL_FOR_TIMER_CONFIGURATION + "_" + index );
 	
-	var labelTag = createLabelTagWithIndex("timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_CONFIGURATION + " " + (index+1));
-	
-	var radiobuttonsTag = createRadioButtonTagsForEachTimerTypes("timerType_" + (index+1));
+	var radiobuttonsTag = createRadioButtonTagsForEachTimerTypes("timerType_" + (index));
 	
 	var inputTag = createTextFieldTagWithIndex( "timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DURATION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING );
-	
 	return (labelTag + radiobuttonsTag+ inputTag + CONST_TAG_LINE_BREAK);
 }
 
@@ -99,7 +105,7 @@ function createRadioButtonTagsForEachTimerTypes (radioButtonName)
 		
 		for(i=0; (i<noOfCustomTimerTypes && document.getElementById("txt_timerType_Duration_" + i) != null); i++)
 		{
-			radioButtonsTags+= createRadioButtonTagWithLabel(i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, document.getElementById("txt_timerType_Description_" + i).value, document.getElementById("txt_timerType_Duration_" + i).value, radioButtonName, CONST_FUNCTION_RADIOBUTTON_CHANGE);
+			radioButtonsTags+= createRadioButtonTagWithLabel(radioButtonName, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, document.getElementById("txt_timerType_Description_" + i).value, document.getElementById("txt_timerType_Duration_" + i).value, radioButtonName, CONST_FUNCTION_RADIOBUTTON_CHANGE);
 		}
 		return radioButtonsTags;
 		
@@ -123,7 +129,7 @@ function createRadioButtonTagWithLabel(index, cssClass, labelText, rbValue, name
 	radioButtonTag = radioButtonTag.concat(",'" + rbValue + "'");
 	radioButtonTag = radioButtonTag.concat(")\"");
 	radioButtonTag = radioButtonTag.concat(">");
-	var labelTag = createLabelTagWithIndex("radioButton_" + index, cssClass, labelText);
+	var labelTag = createLabelTagWithIndex("radioButton_" + index, cssClass, labelText, "radioButton_" + labelText + "_" + index );
 	
 	return (labelTag + radioButtonTag);
 	
@@ -140,10 +146,10 @@ function addTotalNumberOfTimerTypes()
 	
 	for (i=0; i<totalNumberOfTimerTypes; i++)
 	{
-		var labelDescription = createLabelTagWithIndex("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_TYPE_DESCRIPTION);
-		var textFieldDescription = createTextFieldTagWithIndex ("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING);		
+		var labelDescription = createLabelTagWithIndex("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_TYPE_DESCRIPTION, CONST_TEXT_FIELD_PREFIX + "timerType_Description_" + i);
+		var textFieldDescription = createTextFieldTagWithIndex ("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING);
 		
-		var labelDuration = createLabelTagWithIndex("timerType_Duration_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_DURATION);
+		var labelDuration = createLabelTagWithIndex("timerType_Duration_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_DURATION, CONST_TEXT_FIELD_PREFIX + "timerType_Duration_" + i);
 		var textFieldDuration = createTextFieldTagWithIndex ("timerType_Duration_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DURATION);
 		
 		timerTypeConfigurationDiv.innerHTML+= labelDescription + textFieldDescription;
@@ -157,13 +163,15 @@ function radioButtonChangeFunction(radioButtonName, radioButtonValue)
 {
 	var radioButtonId = radioButtonName.substring(radioButtonName.length-1, radioButtonName.length);
 	
-	var radioButtonsTextFieldId = "txt_timerDurationIndex_" + (radioButtonId - 1);
+	var radioButtonsTextFieldId = "txt_timerDurationIndex_" + radioButtonId;
 	document.getElementById(radioButtonsTextFieldId).value = radioButtonValue;
+	loadSpecifiedTimerToTable();
 
 }
 
 function loadSpecifiedTimerToTable()
 {
+
 	var totalNumberOfTimers = document.getElementById("txt_totalNumberOfTimers").value;
 	var timers = [];
 	
@@ -187,19 +195,24 @@ function loadSpecifiedTimerToTable()
 		var timerInputFieldId = "txt_" + "timerDurationIndex_" + i;
 		timers[i] = document.getElementById(timerInputFieldId).value;
 
-		//Adding rows to timers table.
-		var tableRow = timersTable.insertRow(i+1);
-		var tableRowCell0 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_INDEX);
-		var tableRowCell1 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME)	;
-		var tableRowCell2 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME);
-		
-		tableRowCell0.innerHTML = i+1;
-		tableRowCell1.innerHTML = convertMinutesIntoHHMMMSSFormat(timers[i]);
-		tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(timers[i]);
+        //Assigning timer as 0, if the field is empty.
+        if(!timers[i])
+            timers[i]=0;
 
+            //Adding rows to timers table.
+            var tableRow = timersTable.insertRow(i+1);
+            var tableRowCell0 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_INDEX);
+            var tableRowCell1 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME)	;
+            var tableRowCell2 = tableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME);
 
-		test(["timers[i]", timers[i]]+"");
-		
+            tableRowCell0.innerHTML = (i+1);
+            tableRowCell1.innerHTML = convertMinutesIntoHHMMMSSFormat(timers[i]);
+
+            if(i>0 && parseFloat(timers[i])>0)
+                tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]) + parseFloat(timers[i-1]));
+            else
+                tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]));
+
 	}
 	
 	return timers;
@@ -207,13 +220,13 @@ function loadSpecifiedTimerToTable()
 
 function convertMinutesIntoHHMMMSSFormat(minutes)
 {
+
 	var hours = Math.floor(minutes/60);
 	minutes = minutes - (hours * 60);
 	var seconds = minutes % 1;
 	minutes = minutes - seconds;
 	seconds = seconds * 60;
 
-    //test(["hours", hours, "minutes:", minutes, "seconds", seconds]);
 	if(minutes<10)
 	    minutes = "0" + minutes;
 
@@ -227,70 +240,34 @@ function convertMinutesIntoHHMMMSSFormat(minutes)
 
 function displayTimeInTable(timeInHHMMSSFormat, tableRowIndex)
 {
-	
+
 	var timersTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
 	var tableRow = timersTable.rows[tableRowIndex];
 	var tableCell = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME];
 	tableCell.innerHTML = timeInHHMMSSFormat;
-	
+
 }
 
-function stopCurrentRunningTimer()
+function stopCurrentRunningTimer(intervalID)
 {
     if(Current_Running_Timer)
     {
-        clearInterval(Current_Running_Timer);
+        clearInterval(Current_Running_Timer[intervalID]);
     }
 }
-
 function startTimers()
 {
 	var timersTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
-    CONST_CURRENT_TIMER_TABLE_ROW = 1;
-//	for(i = 1; i<timersTable.rows.length && i<10; i++)
-    while(CONST_CURRENT_TIMER_TABLE_ROW<timersTable.rows.length)
+//    CONST_CURRENT_TIMER_TABLE_ROW = 1;
+	for(i = 1; i<timersTable.rows.length; i++)
 	{
-		var tableRow = timersTable.rows[CONST_CURRENT_TIMER_TABLE_ROW];
+		var tableRow = timersTable.rows[i];
 		var remainingTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
-//		Current_Running_Timer = setTimeout(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
-//		Current_Running_Timer = setInterval(runTimer(remainingTime,CONST_CURRENT_TIMER_TABLE_ROW),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
-		Current_Running_Timer = setTimeout(runTimer(remainingTime,CONST_CURRENT_TIMER_TABLE_ROW),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
-        alert("CURRENT row is  is :"+ CONST_CURRENT_TIMER_TABLE_ROW);
+		runTimer(remainingTime,i);
+//		Current_Running_Timer = setInterval(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 
 	}
 	
-	
-	
-
-/*
-	var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
-
-// Update the count down every 1 second
-var x = setInterval(function() {
-
-  // Get today's date and time
-  var now = new Date().getTime();
-    
-  // Find the distance between now and the count down date
-  var distance = countDownDate - now;
-    
-  // Time calculations for days, hours, minutes and seconds
-  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
-  // Output the result in an element with id="demo"
-  document.getElementById("demo").innerHTML = days + "d " + hours + "h "
-  + minutes + "m " + seconds + "s ";
-    
-  // If the count down is over, write some text 
-  if (distance < 0) {
-    clearInterval(x);
-    document.getElementById("demo").innerHTML = "EXPIRED";
-  }
-}, 1000);
-*/
 }
 
 
@@ -312,11 +289,8 @@ function testFunction()
 	document.getElementById("txt_timerType_Duration_2").value = 60;
 	
 	addTotalNumberOfTimers();
+//	startTimers();
 	
-	startTimers();
-	
-	
-
 }
 
 function test(itemsToBePrinted)
@@ -338,10 +312,9 @@ function runTimer(remainingTime, tableRowIndex)
     var minutes = hhMMss[1];
     var seconds = hhMMss[2];
 
-
-    var x = setInterval(function() {
-
-
+    Current_Running_Timer[tableRowIndex] = setInterval(function()
+    {
+        
         if(seconds>0)
         {
             seconds--;
@@ -354,33 +327,68 @@ function runTimer(remainingTime, tableRowIndex)
         else if(hours>0)
         {
             hours--;
-            minutes =59;
+            minutes=59;
             seconds=59;
         }
+        else if (seconds<=0 && minutes<=0 && hours<=0)
+        {
+
+            playTimerEndedSound(Current_Timer_Table_Row);
+            Current_Timer_Table_Row++;
+            stopCurrentRunningTimer(tableRowIndex);
+        }
+
         var newTime = getTimeIn2DigitFormat(hours) + CONST_SYMBOL_FOR_TIME_SEPARATOR;
         newTime = newTime.concat(getTimeIn2DigitFormat(minutes) + CONST_SYMBOL_FOR_TIME_SEPARATOR);
         newTime = newTime.concat(getTimeIn2DigitFormat(seconds));
         displayTimeInTable(newTime,tableRowIndex);
-//        alert(newTime);
-      document.getElementById("p_test_1").innerHTML = hours + "h "
-      + minutes + "m " + seconds + "s ";
-    }, CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
-    CONST_CURRENT_TIMER_TABLE_ROW++;
 
+        displayInTitle();
+    }, CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
+//    CONST_CURRENT_TIMER_TABLE_ROW++;
+//    }
 }
 
 function getTimeIn2DigitFormat(time)
 {
-    if(time<10 && time.length<2)
+    var timeAsString = String(time);
+    if(time<10 && timeAsString.length<2)
         time = "0" + time;
 
     return time;
 }
 
+function displayInTitle()
+{
+Current_Timer_Table_Row
+	var timersTableForDisplaying = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
+	var tableRowForDisplaying = timersTableForDisplaying.rows[Current_Timer_Table_Row];
 
+    document.title = tableRowForDisplaying.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
+}
 
+function playTimerEndedSound(timerTableRowIndex)
+{
+    var soundElement = document.createElement("audio");
 
+    if(timerTableRowIndex % 2 != 0)
+        soundElement.src = CONST_FILE_PATH_SOUND_1;
+    else
+        soundElement.src = CONST_FILE_PATH_SOUND_2;
 
+    document.body.appendChild(soundElement);
+    soundElement.play();
+}
+
+function togglePause()
+{
+   if(Current_Status_Of_Pause_Is_Paused)
+        Current_Status_Of_Pause_Is_Paused = false;
+        
+   else
+        Current_Status_Of_Pause_Is_Paused = true;
+    
+}
 
 
 

@@ -12,8 +12,8 @@
 		</div>
 		
 		<div id="div_runningTimers">
-			<input type="button" id="btn_StartTimers" value="Start" onClick="startTimers()">
-			<input type="button" id="btn_PauseTimers" value="Pause">
+			<input type="button" id="btn_StartTimers" value="Start" onClick="startTimers() ">
+			<input type="button" id="btn_PauseTimers" value="Pause" onClick="togglePause()">
 			<input type="button" id="btn_ResetTimers" value="Reset">
 			
 			<table id="tbl_timersRunning">
@@ -25,25 +25,35 @@
 				<tr>
 					<td>1</td>
 					<td>00:00:03</td>
-					<td>00:00:03</td>
+					<td>00:00:3</td>
 				</tr>
 				<tr>
 					<td>2</td>
 					<td>00:01:00</td>
+					<td>00:00:06</td>
+				</tr>
+				<tr>
+					<td>3</td>
 					<td>00:01:00</td>
+					<td>00:00:09</td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>00:01:00</td>
+					<td>00:00:12</td>
 				</tr>
 			</table>
 		</div>
 		
 		<div id="div_totalNumberOfTimers">
 			<label id="lbl_totalNumberOfTimers" for="txt_totalNumberOfTimers">Total number of Timers:</label>
-			<input type="number" id="txt_totalNumberOfTimers">
+			<input type="number" id="txt_totalNumberOfTimers" onClick="this.select();">
 			<input type="button" id="btn_loadTotalNumberOfTimers" value="Load" onclick="addTotalNumberOfTimers()">
 		</div>
 		
 		<div id="div_totalNumberOfTimerTypes">
 			<label id="lbl_totalNumberOfTimerTypes" for="txt_totalNumberOfTimerTypes">Total number of Timer Types:</label>
-			<input type="number" id="txt_totalNumberOfTimerTypes">
+			<input type="number" id="txt_totalNumberOfTimerTypes" onClick="this.select();">
 			<input type="button" id="btn_loadTotalNumberOfTimerTypes" value="Load" onclick="addTotalNumberOfTimerTypes()">
 		</div>
 		
