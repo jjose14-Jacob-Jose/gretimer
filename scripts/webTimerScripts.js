@@ -18,6 +18,7 @@ var CONST_TEXT_FIELD_PREFIX= "txt_";
 
 var CONST_ID_FOR_RADIO_BUTTON_TYPE="radioButton_timerType";
 var CONST_ID_FOR_TIMERS_TABLE="tbl_timersRunning";
+var CONST_ID_FOR_BTN_START_TIMER="btn_StartTimers";
 
 var CONST_TAG_LINE_BREAK = "<br >";
 
@@ -212,11 +213,20 @@ function loadSpecifiedTimerToTable()
 
             tableRowCell0.innerHTML = (i+1);
             tableRowCell1.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]));
-
-            if(i>0 && parseFloat(timers[i])>0)
-                tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]) + parseFloat(timers[i-1]));
+            if(i>1)
+            {
+                var previousRow = timersTable.rows[i-1];
+                var previousRowCell = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
+                console.log("previousRowCell : "+previousRowCell);
+                previousRowCell = convertHHmmSSTimeToMinutes(previousRowCell);
+                console.log("i:" + i +"/nCurrent :"+ parseFloat(timers[i])+ ", previousRowCell : "+previousRowCell);
+                tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]) + parseFloat(previousRowCell));
+            }
             else
-                tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]));
+             {
+             tableRowCell2.innerHTML = convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i]));
+             console.log("convertMinutesIntoHHMMMSSFormat(parseFloat(" + timers[i] + " )) -->" + convertMinutesIntoHHMMMSSFormat(parseFloat(timers[i])));
+             }
 
 	}
 	
@@ -231,6 +241,9 @@ function convertMinutesIntoHHMMMSSFormat(minutes)
 	var seconds = minutes % 1;
 	minutes = minutes - seconds;
 	seconds = seconds * 60;
+
+	if(hours<10)
+	    hours = "0" + hours;
 
 	if(minutes<10)
 	    minutes = "0" + minutes;
@@ -262,6 +275,11 @@ function stopCurrentRunningTimer(intervalID)
 }
 function startTimers()
 {
+//    if(isButtonEnabled(CONST_ID_FOR_BTN_START_TIMER))
+//    {
+//        Current_Running_Timer = 1;
+//    }
+    disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
     if(Current_Status_Of_Pause_Is_Paused_Enabled)
     {
         togglePause();
@@ -301,10 +319,15 @@ function runTimer(remainingTime, tableRowIndex)
     var hours = hhMMss[0];
     var minutes = hhMMss[1];
     var seconds = hhMMss[2];
-
     Current_Running_Timer[tableRowIndex] = setInterval(function()
     {
+//        Current_Status_Of_Timer_Is_Timer_Running = prompt("Current_Status_Of_Timer_Is_Timer_Running :" + Current_Status_Of_Timer_Is_Timer_Running, Current_Status_Of_Timer_Is_Timer_Running);
+        if(!Current_Status_Of_Timer_Is_Timer_Running)
+        {
+             stopCurrentRunningTimer(tableRowIndex);
 
+        }
+        else{
         if(seconds>0)
         {
             seconds--;
@@ -324,20 +347,19 @@ function runTimer(remainingTime, tableRowIndex)
         {
 
             playTimerEndedSound(Current_Timer_Table_Row);
-            Current_Timer_Table_Row++;
-            stopCurrentRunningTimer(tableRowIndex);
-        }
 
-        if(Current_Status_Of_Pause_Is_Paused_Enabled)
-        {
+            if(tableRowIndex >= Current_Timer_Table_Row)
+                Current_Timer_Table_Row++;
+
             stopCurrentRunningTimer(tableRowIndex);
         }
 
         var newTime = getTimeIn2DigitFormat(hours) + CONST_SYMBOL_FOR_TIME_SEPARATOR;
         newTime = newTime.concat(getTimeIn2DigitFormat(minutes) + CONST_SYMBOL_FOR_TIME_SEPARATOR);
         newTime = newTime.concat(getTimeIn2DigitFormat(seconds));
-        displayTimeInTable(newTime,tableRowIndex);
 
+        displayTimeInTable(newTime,tableRowIndex);
+        }
         displayInTitle();
     }, CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 //    CONST_CURRENT_TIMER_TABLE_ROW++;
@@ -379,55 +401,68 @@ function playTimerEndedSound(timerTableRowIndex)
 
 function togglePause()
 {
-    if(Current_Status_Of_Timer_Is_Timer_Running)
-    {
+//    if(Current_Status_Of_Timer_Is_Timer_Running)
+//    {
    if(Current_Status_Of_Pause_Is_Paused_Enabled)
      {   Current_Status_Of_Pause_Is_Paused_Enabled = false;
          document.getElementById("btn_PauseTimers").value = CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED;
+         disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
          startTimers();
+
+
      }
         
-   else
-    {    Current_Status_Of_Pause_Is_Paused_Enabled = true;
+   else if (Current_Status_Of_Timer_Is_Timer_Running)
+    {
+    Current_Status_Of_Pause_Is_Paused_Enabled = true;
          document.getElementById("btn_PauseTimers").value = CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_ENABLED;
-
+        Current_Status_Of_Timer_Is_Timer_Running = false;
     }
-    }
+//    }
 }
+
 
 function resetTimers()
 {
 
     var timersTableReset = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
-    for(i_resetTimer=1; i_resetTimer<timersTableReset.rows.length; i_resetTimer++)
+    for(i=1; i<timersTableReset.rows.length; i++)
     {
-        var tableRowReset = timersTableReset.rows[i_resetTimer];
+        var tableRowReset = timersTableReset.rows[i];
 
         tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
 
-        if(i_resetTimer>1)
+        if(i>1)
         {
-             var previousRow = timersTableReset.rows[i_resetTimer-1];
-             var PreviousRowRemainingTime = convertHHmmSSTimeToMinutes(previousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+             var previousRow = timersTableReset.rows[i-1];
+             var previousRowRemainingTime = convertHHmmSSTimeToMinutes(previousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
 
-             var currentRowRemainingTime =  convertHHmmSSTimeToMinutes(tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
-             currentRowRemainingTime = currentRowRemainingTime + PreviousRowRemainingTime;
+             var currentRowOriginalTime =  convertHHmmSSTimeToMinutes(tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML);
+             var currentRowRemainingTime = currentRowOriginalTime + previousRowRemainingTime;
              tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
         }
-
+        else
+        {
         tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
+        }
+        stopCurrentRunningTimer(i)
 
     }
+    while(disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER));
 }
 
 function convertHHmmSSTimeToMinutes(hhMMssTime)
 {
-    var hhMMss = hhMMssTime.split(CONST_SYMBOL_FOR_TIME_SEPARATOR);
-    var hours = parseInt(hhMMss[0])*60;
-    var minutes = parseInt(hhMMss[1]);
-    var seconds = parseFloat(hhMMss[2])/6;
+    if(hhMMssTime !="" && hhMMssTime.indexOf(CONST_SYMBOL_FOR_TIME_SEPARATOR)>-1)
+    {
+        var hhMMss = hhMMssTime.split(CONST_SYMBOL_FOR_TIME_SEPARATOR);
+        var hours = parseInt(hhMMss[0])*60;
+        var minutes = parseInt(hhMMss[1]);
+        var seconds = parseFloat(hhMMss[2])/6;
 
-    return (hours + minutes + seconds);
+        return (hours + minutes + seconds);
+    }
+    return 0;
 }
 
 function isTableHavingValidTimerRemaining()
@@ -447,24 +482,66 @@ function isTableHavingValidTimerRemaining()
     return false;
 }
 
-function testFunction()
-{
-	document.getElementById("txt_totalNumberOfTimers").value = 2;
-	document.getElementById("txt_totalNumberOfTimerTypes").value = 3;
-
-	addTotalNumberOfTimerTypes();
-
-
-	document.getElementById("txt_timerType_Description_0").value = "Verbal";
-	document.getElementById("txt_timerType_Description_1").value = "Quant";
-	document.getElementById("txt_timerType_Description_2").value = "Writing";
-
-
-	document.getElementById("txt_timerType_Duration_0").value = 30;
-	document.getElementById("txt_timerType_Duration_1").value = 45;
-	document.getElementById("txt_timerType_Duration_2").value = 60;
-
-	addTotalNumberOfTimers();
+//function testFunction()
+//{
+//	document.getElementById("txt_totalNumberOfTimers").value = 2;
+//	document.getElementById("txt_totalNumberOfTimerTypes").value = 3;
+//
+//	addTotalNumberOfTimerTypes();
+//
+//
+//	document.getElementById("txt_timerType_Description_0").value = "Verbal";
+//	document.getElementById("txt_timerType_Description_1").value = "Quant";
+//	document.getElementById("txt_timerType_Description_2").value = "Writing";
+//
+//
+//	document.getElementById("txt_timerType_Duration_0").value = 30;
+//	document.getElementById("txt_timerType_Duration_1").value = 45;
+//	document.getElementById("txt_timerType_Duration_2").value = 60;
+//
+//	addTotalNumberOfTimers();
 //	startTimers();
+//
+//}
 
+function skipCurrentTimer()
+{
+    var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
+    var i=0;
+    for(i=1; i<timerTable.rows.length; i++)
+    {
+        var timerTableRow = timerTable.rows[i];
+        var currentRowRemainingTime =  convertHHmmSSTimeToMinutes(timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+
+        if(currentRowRemainingTime>0)
+         {
+            currentRowRemainingTime = 0;
+            timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
+            break;
+         }
+    }
+    if(i>0)
+    {
+        stopCurrentRunningTimer(i);
+    }
+    Current_Timer_Table_Row++;
+
+}
+
+function disableEnableInputButton(buttonID)
+{
+     var buttonPresentStatus = document.getElementById(buttonID).disabled;
+     if(buttonPresentStatus)
+        buttonPresentStatus = false;
+     else
+        buttonPresentStatus = true;
+
+     document.getElementById(buttonID).disabled = buttonPresentStatus;
+     return buttonPresentStatus;
+
+}
+
+function isButtonEnabled(buttonID)
+{
+     return document.getElementById(buttonID).disabled;
 }

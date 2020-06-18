@@ -4,8 +4,9 @@
 		<title>Countdown Timers</title>
 	</head>
 
-	<body onload="testFunction()">
+	<body onload="loadDefaultValues()">
 		<script type="text/javascript" src="../scripts/webTimerScripts.js"></script>
+		<script type="text/javascript" src="../scripts/defaultDataFile.js"></script>
 		<link rel = "stylesheet"    type = "text/css"    href = "../css/web-countdown-timer-styles.css" />
 		
 		<div id="div_mainTimer">
@@ -14,33 +15,14 @@
 		<div id="div_runningTimers">
 			<input type="button" id="btn_StartTimers" value="Start" onClick="startTimers() ">
 			<input type="button" id="btn_PauseTimers" value="Pause" onClick="togglePause()">
+			<input type="button" id="btn_SkipTimers" value="Skip" onclick="skipCurrentTimer()">
 			<input type="button" id="btn_ResetTimers" value="Reset" onClick="resetTimers()">
 			
 			<table id="tbl_timersRunning">
 				<tr>
 					<th>#</th>
 					<th>Original </th>
-					<th>Remaining</th>				
-				</tr>	
-				<tr>
-					<td>1</td>
-					<td>00:00:03</td>
-					<td>00:00:3</td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>00:01:00</td>
-					<td>00:00:06</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>00:01:00</td>
-					<td>00:00:09</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>00:01:00</td>
-					<td>00:00:12</td>
+					<th>Remaining</th>
 				</tr>
 			</table>
 		</div>
