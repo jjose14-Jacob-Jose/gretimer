@@ -11,7 +11,8 @@
 
 		<link rel = "stylesheet"    type = "text/css"    href = "../css/web-countdown-timer-styles.css" />
 		
-		<div id="div_mainTimer">
+		<div id="div_mainTimer" class="bigTimer">
+			<h1 id="heading_BigTimerDisplay" ></h1>
 		</div>
 		
 		<div id="div_runningTimers">
@@ -41,21 +42,29 @@
 
 		<hr/>
 		<div id="div_totalNumberOfTimers">
+			<h3>Timer Type Specification</h3>
 			<label id="lbl_totalNumberOfTimers" for="txt_totalNumberOfTimers">Total number of Timers:</label>
 			<input type="number" id="txt_totalNumberOfTimers" onClick="this.select();">
 			<input type="button" id="btn_loadTotalNumberOfTimers" value="Load" onclick="addTotalNumberOfTimers()">
+
 		</div>
 
 		<div id="div_totalNumberOfTimerTypes">
+
 			<label id="lbl_totalNumberOfTimerTypes" for="txt_totalNumberOfTimerTypes">Total number of Timer Types:</label>
 			<input type="number" id="txt_totalNumberOfTimerTypes" onClick="this.select();">
 			<input type="button" id="btn_loadTotalNumberOfTimerTypes" value="Load" onclick="addTotalNumberOfTimerTypes()">
+			<hr>
+			<input type="checkbox" id="cb_enableDarkMode" name="colorMode" value="true" onclick="enableDarkMode()">
+			<label for="cb_enableDarkMode">Dark Mode</label><br>
 		</div>
 		<hr/>
 		<div id="div_timerTypeConfiguration">
+		<h3>Timer Types for the Timer</h3>
 
 		</div>
 		<hr/>
+		<h3>Timer Type Configuration</h3>
 		<div id="div_timersConfiguration">
 
 		</div>
@@ -65,9 +74,9 @@
 			<hr/>
 			<h3>Help</h3>
 			<ol>
-				<li>Press "Space" to Start Timer.</li>
+				<li>Press "Shift" to Start Timer.</li>
 				<li>Press "S" to Skip a Timer.</li>
-				<li>Press "R" to Reset Timer.</li>
+				<li>Press "Del" to Reset Timer.</li>
 				<li>Press "P" to Pause/Resume Timer.</li>
 				<li>Press "L" to Load Specified Timers to Table.</li>
 			</ol>

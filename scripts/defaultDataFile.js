@@ -105,24 +105,33 @@ function keyPressEvent(eventKeyCode)
 {
 		switch (eventKeyCode) {
 
-        //KeyCode of SpaceBar = 32.
-		case 32:startTimers();
+        //KeyCode of Shift = 16.
+		case 16:startTimers();
 				break;
 
         //KeyCode of P/p = 80.
-	    case 80:togglePause();
+        case 80:togglePause();
+            break;
+
+        //KeyCode of R/R = 82.
+	    case 82:togglePause();
 				break;
 
         //KeyCode of S/s = 83.
 	    case 83:skipCurrentTimer();
 				break;
 
-        //KeyCode of R/r = 82.
-	    case 82:resetTimers();
+        //KeyCode of Del = 46.
+	    case 46:resetTimers();
 				break;
 
         //KeyCode of L/l = 76.
         case 76:loadSpecifiedTimerToTable();
+                break;
+
+
+		//KeyCode of D/d = 68.
+        case 68:toggleDarkModeByShortcutKey();
                 break;
 
 		}

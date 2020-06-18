@@ -1,1 +1,53 @@
-#styles
+.bigTimer {
+   
+    padding-left: 30%;
+    font-size: 300%;
+}
+
+
+.div_timer_configuration_label_0{
+    background :  #cce6ff;
+}
+
+.div_timer_configuration_label_1{
+    background : #66d9ff;
+}
+
+.div_timer_configuration_label_2{
+    background :  #aa80ff;
+}
+.div_timer_configuration_label_3{
+    background :  #ff66ff;
+}
+.div_timer_configuration_label_4{
+    background : #ff6666;
+}
+.div_timer_configuration_label_5{
+    background : #ffcc80;
+}
+.div_timer_configuration_label_6{
+    background :  #9fff80;
+}
+.div_timer_configuration_label_7{
+    background :  #aaff00;
+}
+.div_timer_configuration_label_8{
+    background :  #33ff99;
+}
+.div_timer_configuration_label_9{
+    background :  #66b3ff;
+
+}.div_timer_configuration_label_10{
+    background :  #e67300;
+}
+
+.darkMode, .darkMode input{
+    background : #1e1e1f;
+    color : #ffffff;
+}
+
+.lightMode, .lightMode input{
+    background : #ffffff;
+    color : #000000;
+}
+

@@ -14,6 +14,7 @@ var CONST_TYPE_FOR_TIMER_TYPE_DURATION = "number";
 var CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION = "text";
 
 var CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS = "div_timer_duration";
+var CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_LABELS = "div_timer_configuration_label_";
 
 var CONST_TEXT_FIELD_PREFIX= "txt_";
 
@@ -21,11 +22,16 @@ var CONST_ID_FOR_RADIO_BUTTON_TYPE="radioButton_timerType";
 var CONST_ID_FOR_TIMERS_TABLE="tbl_timersRunning";
 var CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE="tbl_exhaustedTimersInfo";
 var CONST_ID_FOR_BTN_START_TIMER="btn_StartTimers";
+var CONST_ID_FOR_LABEL_BIGGER_TIMER_DISPLAY="heading_BigTimerDisplay";
+var CONST_ID_FOR_CB_ENABLE_DARK_MODE="cb_enableDarkMode";
 
 var CONST_TAG_LINE_BREAK = "<br >";
 
 var CONST_FUNCTION_RADIOBUTTON_CHANGE = "radioButtonChangeFunction";
 var CONST_FUNCTION_TEXTFIELD_CHANGE = "loadSpecifiedTimerToTable";
+
+var CONST_CSS_CLASS_DARK_MODE = "darkMode";
+var CONST_CSS_CLASS_LIGHT_MODE = "lightMode";
 
 var CONST_EMPTY_STRING = "";
 var CONST_SYMBOL_FOR_TIME_SEPARATOR = ":";
@@ -48,6 +54,7 @@ var Current_Timer_Table_Row = 1;
 var Current_Running_Timer = [];
 var Current_Status_Of_Pause_Is_Paused_Enabled = false;
 var Current_Status_Of_Timer_Is_Timer_Running = false;
+var Current_Status_Of_Timer_Was_It_Started = false;
 
 function addTotalNumberOfTimers()
 {
@@ -113,7 +120,7 @@ function createRadioButtonTagsForEachTimerTypes (radioButtonName)
 		
 		for(i=0; (i<noOfCustomTimerTypes && document.getElementById("txt_timerType_Duration_" + i) != null); i++)
 		{
-			radioButtonsTags+= createRadioButtonTagWithLabel(radioButtonName, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, document.getElementById("txt_timerType_Description_" + i).value, document.getElementById("txt_timerType_Duration_" + i).value, radioButtonName, CONST_FUNCTION_RADIOBUTTON_CHANGE);
+			radioButtonsTags+= createRadioButtonTagWithLabel(radioButtonName, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_LABELS + i, document.getElementById("txt_timerType_Description_" + i).value, document.getElementById("txt_timerType_Duration_" + i).value, radioButtonName, CONST_FUNCTION_RADIOBUTTON_CHANGE);
 		}
 		return radioButtonsTags;
 		
@@ -169,8 +176,8 @@ function addTotalNumberOfTimerTypes()
 
 function radioButtonChangeFunction(radioButtonName, radioButtonValue)
 {
-	var radioButtonId = radioButtonName.substring(radioButtonName.length-1, radioButtonName.length);
-	
+	var radioButtonId = radioButtonName.split("_");
+	radioButtonId = radioButtonId[1];
 	var radioButtonsTextFieldId = "txt_timerDurationIndex_" + radioButtonId;
 	document.getElementById(radioButtonsTextFieldId).value = radioButtonValue;
 	loadSpecifiedTimerToTable();
@@ -231,7 +238,7 @@ function loadSpecifiedTimerToTable()
              }
 
 	}
-	
+	resetTimers();
 	return timers;
 }
 
@@ -282,15 +289,20 @@ function stopCurrentRunningTimer(intervalID)
 }
 function startTimers()
 {
-//    if(isButtonEnabled(CONST_ID_FOR_BTN_START_TIMER))
+//    if(isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER))
 //    {
 //        Current_Running_Timer = 1;
 //    }
-    if(isButtonEnabled(CONST_ID_FOR_BTN_START_TIMER))
-    {
-        disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
-    }
 
+//alert("isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER) :" +isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER));
+//alert("isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER) " + isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER)  + "\nCurrent_Status_Of_Timer_Was_It_Started"  + Current_Status_Of_Timer_Was_It_Started);
+    if(!(isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER)))
+    {
+        if(!(Current_Status_Of_Timer_Was_It_Started))
+        {   disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
+            Current_Status_Of_Timer_Was_It_Started = true;
+        }
+    }
     if(Current_Status_Of_Pause_Is_Paused_Enabled)
     {
         togglePause();
@@ -311,6 +323,7 @@ function startTimers()
 
 	}
 	}
+//	}
 
 }
 
@@ -397,6 +410,8 @@ function displayInTitle()
 	var timersTableForDisplaying = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
 	var tableRowForDisplaying = timersTableForDisplaying.rows[Current_Timer_Table_Row];
     document.title = tableRowForDisplaying.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
+    document.getElementById(CONST_ID_FOR_LABEL_BIGGER_TIMER_DISPLAY).innerHTML = tableRowForDisplaying.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
+
 }
 
 function playTimerEndedSound(timerTableRowIndex)
@@ -420,9 +435,10 @@ function togglePause()
 //    if(Current_Status_Of_Timer_Is_Timer_Running)
 //    {
    if(Current_Status_Of_Pause_Is_Paused_Enabled)
-     {   Current_Status_Of_Pause_Is_Paused_Enabled = false;
+     {
+        Current_Status_Of_Pause_Is_Paused_Enabled = false;
          document.getElementById("btn_PauseTimers").value = CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED;
-         disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
+//         disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
          startTimers();
 
 
@@ -444,6 +460,7 @@ function resetTimers()
     var timersTableReset = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     for(i=1; i<timersTableReset.rows.length; i++)
     {
+        stopCurrentRunningTimer(i)
         var tableRowReset = timersTableReset.rows[i];
 
         tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
@@ -461,11 +478,12 @@ function resetTimers()
         {
         tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = tableRowReset.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
         }
-        stopCurrentRunningTimer(i)
+
 
     }
     while(disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER));
     Current_Timer_Table_Row = 1;
+    Current_Status_Of_Timer_Was_It_Started = false;
     clearTableContents(CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE);
 }
 
@@ -565,7 +583,8 @@ function skipCurrentTimer()
     }
 //    Current_Timer_Table_Row++;
 //    updateRemainingTimesOfFollowingTimers(Current_Timer_Table_Row);
-    startTimers();
+    if(!(Current_Status_Of_Pause_Is_Paused_Enabled))
+        startTimers();
 
 }
 
@@ -582,7 +601,7 @@ function disableEnableInputButton(buttonID)
 
 }
 
-function isButtonEnabled(buttonID)
+function isButtonDisabled(buttonID)
 {
      return document.getElementById(buttonID).disabled;
 }
@@ -624,9 +643,38 @@ function updatedExhaustedTimersInfo(timerValueInHHmmSS, timerRowNumber)
 function clearTableContents(tableId)
 {
     var table = document.getElementById(tableId);
-    for(i=1; i<table.rows.length; i++)
+    for(i=table.rows.length-1; i>0; i--)
     {
+//        alert("i:"+i +"\ntable.rows.length:" + table.rows.length);
         table.deleteRow(i);
     }
 }
 
+function enableDarkMode()
+{
+
+    if(document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked)
+     {
+          document.getElementsByTagName("BODY")[0].setAttribute("class", "darkMode")
+          document.getElementsByTagName("BODY")[0].setAttribute("style", "")
+      }
+    else
+      {
+          document.getElementsByTagName("BODY")[0].setAttribute("class", "lightMode")
+          document.getElementsByTagName("BODY")[0].setAttribute("style", "")
+      }
+}
+
+function toggleDarkModeByShortcutKey()
+{
+    if(document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked)
+    {
+        enableDarkMode();
+        document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked = false;
+    }
+    else
+    {
+        enableDarkMode();
+        document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked = true;
+    }
+}
