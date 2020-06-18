@@ -14,6 +14,7 @@ function loadDefaultValues()
 {
     loadDefaultTimerTypes();
     loadDefaultTimerValues();
+//    enableKeyBoardShortcuts();
 }
 
 function loadDefaultTimerValues()
@@ -93,14 +94,37 @@ function loadDefaultTimerTypes()
 
 }
 
+//Assigning Events to each Key Press
+$(document).keyup(function(event) {
+   keyPressEvent(event.keyCode)
+});
 
-//function convertHHmmSSTimeToMinutes(hhMMssTime)
-//{
-//    var hhMMss = hhMMssTime.split(CONST_SYMBOL_FOR_TIME_SEPARATOR);
-//    var hours = parseInt(hhMMss[0])*60;
-//    var minutes = parseInt(hhMMss[1]);
-//    var seconds = parseFloat(hhMMss[2])/6;
-//
-//    return (hours + minutes + seconds);
-//}
 
+//FUNCTION TO BIND KEY PRESS TO EVENTS
+function keyPressEvent(eventKeyCode)
+{
+		switch (eventKeyCode) {
+
+        //KeyCode of SpaceBar = 32.
+		case 32:startTimers();
+				break;
+
+        //KeyCode of P/p = 80.
+	    case 80:togglePause();
+				break;
+
+        //KeyCode of S/s = 83.
+	    case 83:skipCurrentTimer();
+				break;
+
+        //KeyCode of R/r = 82.
+	    case 82:resetTimers();
+				break;
+
+        //KeyCode of L/l = 76.
+        case 76:loadSpecifiedTimerToTable();
+                break;
+
+		}
+
+}

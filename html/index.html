@@ -5,8 +5,10 @@
 	</head>
 
 	<body onload="loadDefaultValues()">
+		<script type="text/javascript" src="../scripts/jquery-3.4.1.js"></script>
 		<script type="text/javascript" src="../scripts/webTimerScripts.js"></script>
 		<script type="text/javascript" src="../scripts/defaultDataFile.js"></script>
+
 		<link rel = "stylesheet"    type = "text/css"    href = "../css/web-countdown-timer-styles.css" />
 		
 		<div id="div_mainTimer">
@@ -26,31 +28,49 @@
 				</tr>
 			</table>
 		</div>
-		
+		<div id="div_exhaustedTimersInfo">
+			<hr/>
+			<table id="tbl_exhaustedTimersInfo" >
+				<tr>
+					<th>#</th>
+					<th>Original </th>
+					<th>Run Time</th>
+				</tr>
+			</table>
+		</div>
+
+		<hr/>
 		<div id="div_totalNumberOfTimers">
 			<label id="lbl_totalNumberOfTimers" for="txt_totalNumberOfTimers">Total number of Timers:</label>
 			<input type="number" id="txt_totalNumberOfTimers" onClick="this.select();">
 			<input type="button" id="btn_loadTotalNumberOfTimers" value="Load" onclick="addTotalNumberOfTimers()">
 		</div>
-		
+
 		<div id="div_totalNumberOfTimerTypes">
 			<label id="lbl_totalNumberOfTimerTypes" for="txt_totalNumberOfTimerTypes">Total number of Timer Types:</label>
 			<input type="number" id="txt_totalNumberOfTimerTypes" onClick="this.select();">
 			<input type="button" id="btn_loadTotalNumberOfTimerTypes" value="Load" onclick="addTotalNumberOfTimerTypes()">
 		</div>
-		
+		<hr/>
 		<div id="div_timerTypeConfiguration">
 
 		</div>
-		
+		<hr/>
 		<div id="div_timersConfiguration">
 
 		</div>
 		<input type="button" id="btn_loadTimer" value="Load Timers" onclick="loadSpecifiedTimerToTable()">
 		
-		<div id="div_test_Area">
-			<p id="p_test_1"></p>
+		<div id="div_HelpArea">
 			<hr/>
+			<h3>Help</h3>
+			<ol>
+				<li>Press "Space" to Start Timer.</li>
+				<li>Press "S" to Skip a Timer.</li>
+				<li>Press "R" to Reset Timer.</li>
+				<li>Press "P" to Pause/Resume Timer.</li>
+				<li>Press "L" to Load Specified Timers to Table.</li>
+			</ol>
 		</div>
 		
 

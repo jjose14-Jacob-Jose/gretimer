@@ -4,7 +4,8 @@ Constants values
 var CONST_LBL_FOR_TIMER_DURATION = "Timer Duration";
 var CONST_LBL_FOR_TIMER_TYPE_DESCRIPTION = "Timer Description";
 var CONST_LBL_FOR_TIMER_TYPE_VALUE = "Duration ";
-var CONST_LBL_FOR_TIMER_CONFIGURATION = "Timer";
+var CONST_LBL_FOR_TIMER_CONFIGURATION = "Timer ";
+var CONST_LBL_FOR_TIMER_CONFIGURATION_SUFFIX = "  :";
 
 var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED = "Pause";
 var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_ENABLED = "Resume";
@@ -18,6 +19,7 @@ var CONST_TEXT_FIELD_PREFIX= "txt_";
 
 var CONST_ID_FOR_RADIO_BUTTON_TYPE="radioButton_timerType";
 var CONST_ID_FOR_TIMERS_TABLE="tbl_timersRunning";
+var CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE="tbl_exhaustedTimersInfo";
 var CONST_ID_FOR_BTN_START_TIMER="btn_StartTimers";
 
 var CONST_TAG_LINE_BREAK = "<br >";
@@ -92,7 +94,7 @@ function createFunctionStringWithParameters(functionName, functionParameter1, fu
 
 function createTimerConfigurationEntry(index)
 {
-	var labelTag = createLabelTagWithIndex("timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_CONFIGURATION + " " + (index+1), "radioButton_" + CONST_LBL_FOR_TIMER_CONFIGURATION + "_" + index );
+	var labelTag = createLabelTagWithIndex("timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_CONFIGURATION + " " + (index+1) + CONST_LBL_FOR_TIMER_CONFIGURATION_SUFFIX, "radioButton_" + CONST_LBL_FOR_TIMER_CONFIGURATION + "_" + index );
 	
 	var radiobuttonsTag = createRadioButtonTagsForEachTimerTypes("timerType_" + (index));
 	
@@ -137,7 +139,7 @@ function createRadioButtonTagWithLabel(index, cssClass, labelText, rbValue, name
 	radioButtonTag = radioButtonTag.concat(">");
 	var labelTag = createLabelTagWithIndex("radioButton_" + index, cssClass, labelText, "radioButton_" + labelText + "_" + index );
 	
-	return (labelTag + radioButtonTag);
+	return (radioButtonTag + labelTag);
 	
 		
 }
@@ -242,6 +244,10 @@ function convertMinutesIntoHHMMMSSFormat(minutes)
 	minutes = minutes - seconds;
 	seconds = seconds * 60;
 
+    hours = Math.floor(hours);
+    minutes = Math.floor(minutes);
+    seconds = Math.floor(seconds);
+
 	if(hours<10)
 	    hours = "0" + hours;
 
@@ -252,6 +258,7 @@ function convertMinutesIntoHHMMMSSFormat(minutes)
 	    seconds = "0" + seconds;
 	else if(seconds == 0)
 	    seconds = "00";
+
 
 	return (hours + CONST_SYMBOL_FOR_TIME_SEPARATOR +  minutes + CONST_SYMBOL_FOR_TIME_SEPARATOR + seconds);
 }
@@ -279,7 +286,11 @@ function startTimers()
 //    {
 //        Current_Running_Timer = 1;
 //    }
-    disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
+    if(isButtonEnabled(CONST_ID_FOR_BTN_START_TIMER))
+    {
+        disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER);
+    }
+
     if(Current_Status_Of_Pause_Is_Paused_Enabled)
     {
         togglePause();
@@ -292,8 +303,10 @@ function startTimers()
 	for(i = 1; i<timersTable.rows.length && isTableHavingValidTimerRemaining(); i++)
 	{
 		var tableRow = timersTable.rows[i];
+		var originalTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
 		var remainingTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
-		runTimer(remainingTime,i);
+
+		runTimer(remainingTime,i,originalTime);
 //		Current_Running_Timer = setInterval(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 
 	}
@@ -313,7 +326,7 @@ function test(itemsToBePrinted)
 
 }
 
-function runTimer(remainingTime, tableRowIndex)
+function runTimer(remainingTime, tableRowIndex, originalTime)
 {
     var hhMMss = remainingTime.split(CONST_SYMBOL_FOR_TIME_SEPARATOR);
     var hours = hhMMss[0];
@@ -349,7 +362,10 @@ function runTimer(remainingTime, tableRowIndex)
             playTimerEndedSound(Current_Timer_Table_Row);
 
             if(tableRowIndex >= Current_Timer_Table_Row)
+            {
+                updatedExhaustedTimersInfo(originalTime, Current_Timer_Table_Row)
                 Current_Timer_Table_Row++;
+            }
 
             stopCurrentRunningTimer(tableRowIndex);
         }
@@ -449,6 +465,8 @@ function resetTimers()
 
     }
     while(disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER));
+    Current_Timer_Table_Row = 1;
+    clearTableContents(CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE);
 }
 
 function convertHHmmSSTimeToMinutes(hhMMssTime)
@@ -456,9 +474,9 @@ function convertHHmmSSTimeToMinutes(hhMMssTime)
     if(hhMMssTime !="" && hhMMssTime.indexOf(CONST_SYMBOL_FOR_TIME_SEPARATOR)>-1)
     {
         var hhMMss = hhMMssTime.split(CONST_SYMBOL_FOR_TIME_SEPARATOR);
-        var hours = parseInt(hhMMss[0])*60;
-        var minutes = parseInt(hhMMss[1]);
-        var seconds = parseFloat(hhMMss[2])/6;
+        var hours = parseFloat(hhMMss[0])*60;
+        var minutes = parseFloat(hhMMss[1]);
+        var seconds = parseFloat(hhMMss[2])/60;
 
         return (hours + minutes + seconds);
     }
@@ -508,23 +526,46 @@ function skipCurrentTimer()
 {
     var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     var i=0;
+    //Stopping all timers.
+    for(i=1; i<timerTable.rows.length; i++)
+        stopCurrentRunningTimer(i);
+
+    //Making current running timer's time =0.
     for(i=1; i<timerTable.rows.length; i++)
     {
         var timerTableRow = timerTable.rows[i];
+        var currentRowOriginalTime =  convertHHmmSSTimeToMinutes(timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML);
         var currentRowRemainingTime =  convertHHmmSSTimeToMinutes(timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+        var currentRowElapsedTime =   parseFloat(currentRowOriginalTime) - parseFloat(currentRowRemainingTime);
+        currentRowElapsedTime = convertMinutesIntoHHMMMSSFormat(currentRowElapsedTime);
 
         if(currentRowRemainingTime>0)
          {
+
+            updatedExhaustedTimersInfo(currentRowElapsedTime, Current_Timer_Table_Row);
             currentRowRemainingTime = 0;
             timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
+            Current_Timer_Table_Row++;
             break;
          }
     }
-    if(i>0)
+
+    //Updating remaining time of subsequent timers.
+    for(i++; i<timerTable.rows.length; i++)
     {
-        stopCurrentRunningTimer(i);
+        var timerTableCurrentRow = timerTable.rows[i];
+        var timerTablePreviousRow = timerTable.rows[i-1];
+        var currentRowOriginalTime =  convertHHmmSSTimeToMinutes(timerTableCurrentRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML);
+        var previousRowRemainingTime =  convertHHmmSSTimeToMinutes(timerTablePreviousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+
+//        alert("previousRowRemainingTime :" + previousRowRemainingTime + "\n" + "currentRowOriginalTime :" + currentRowOriginalTime);
+        var currentRowRemainingTime = parseFloat(currentRowOriginalTime + previousRowRemainingTime);
+        currentRowRemainingTime = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
+        timerTableCurrentRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = currentRowRemainingTime;
     }
-    Current_Timer_Table_Row++;
+//    Current_Timer_Table_Row++;
+//    updateRemainingTimesOfFollowingTimers(Current_Timer_Table_Row);
+    startTimers();
 
 }
 
@@ -545,3 +586,47 @@ function isButtonEnabled(buttonID)
 {
      return document.getElementById(buttonID).disabled;
 }
+
+function updateRemainingTimesOfFollowingTimers(currentRunningTimerRowNo)
+{
+    var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
+    for(i=currentRunningTimerRowNo; i<timerTable.rows.length; i++)
+    {
+        var timerTableCurrentRow = timerTable.rows[i];
+        var timerTablePreviousRow = timerTable.rows[i-1];
+        var currentRowOriginalTime =  convertHHmmSSTimeToMinutes(timerTableCurrentRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML);
+        var previousRowRemainingTime =  convertHHmmSSTimeToMinutes(timerTablePreviousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
+
+        var currentRowRemainingTime = parseFloat(currentRowOriginalTime + previousRowRemainingTime);
+        currentRowRemainingTime = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
+        timerTableCurrentRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = currentRowRemainingTime;
+    }
+}
+
+function updatedExhaustedTimersInfo(timerValueInHHmmSS, timerRowNumber)
+{
+    var exhaustedTimerTable = document.getElementById(CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE);
+    var exhaustedTimerTableRow = exhaustedTimerTable.insertRow(timerRowNumber);
+    var exhaustedTimerTableIndexCell = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_INDEX);
+    var exhaustedTimerTableIndexExhaustedTimerValue = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME);
+
+   exhaustedTimerTableIndexCell.innerHTML = timerRowNumber;
+   exhaustedTimerTableIndexExhaustedTimerValue.innerHTML = timerValueInHHmmSS;
+//   alert("exhaustedTimerTableIndexExhaustedTimerValue : " + timerValueInHHmmSS);
+
+//    alert("timerTable.rows[timerRowNumber];" + timerTable.rows[timerRowNumber] );
+////    alert(" timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_INDEX].innerHTML = timerRowNumber; " +  timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_INDEX].innerHTML + "\ntimerRowNumber " + timerRowNumber);
+//    timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_INDEX].innerHTML = timerRowNumber;
+//
+//    timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML = convertMinutesIntoHHMMMSSFormat(timerValue);
+}
+
+function clearTableContents(tableId)
+{
+    var table = document.getElementById(tableId);
+    for(i=1; i<table.rows.length; i++)
+    {
+        table.deleteRow(i);
+    }
+}
+
