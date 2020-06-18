@@ -669,12 +669,14 @@ function toggleDarkModeByShortcutKey()
 {
     if(document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked)
     {
-        enableDarkMode();
         document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked = false;
+        enableDarkMode();
+
     }
     else
     {
-        enableDarkMode();
+
         document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked = true;
+         enableDarkMode();
     }
 }
