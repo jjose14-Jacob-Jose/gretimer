@@ -482,9 +482,14 @@ function resetTimers()
 
     }
     while(disableEnableInputButton(CONST_ID_FOR_BTN_START_TIMER));
+
     Current_Timer_Table_Row = 1;
     Current_Status_Of_Timer_Was_It_Started = false;
+    //Resetting 'Pause' function.
+    Current_Status_Of_Pause_Is_Paused_Enabled = false;
+    document.getElementById("btn_PauseTimers").value = CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED;
     clearTableContents(CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE);
+
 }
 
 function convertHHmmSSTimeToMinutes(hhMMssTime)
@@ -583,7 +588,7 @@ function skipCurrentTimer()
     }
 //    Current_Timer_Table_Row++;
 //    updateRemainingTimesOfFollowingTimers(Current_Timer_Table_Row);
-    if(!(Current_Status_Of_Pause_Is_Paused_Enabled))
+    if(!(Current_Status_Of_Pause_Is_Paused_Enabled) && Current_Status_Of_Timer_Is_Timer_Running)
         startTimers();
 
 }
