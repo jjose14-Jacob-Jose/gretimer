@@ -8,7 +8,7 @@ var CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME= 2;
 
 */
 
-var CONST_DEFAULT_TIME_SEQUENCE_TO_BE_LOADED = [1, 30, 1, 30, 1, 45, 10, 30, 1, 60, 1, 45, 1, 30 ];
+var CONST_DEFAULT_TIME_SEQUENCE_TO_BE_LOADED = [1, 30, 1, 30, 1, 30, 1, 30, 10, 30, 1, 30, 1, 30, 1, 30];
 
 function loadDefaultValues()
 {
@@ -87,8 +87,8 @@ function loadDefaultTimerTypes()
 	document.getElementById("txt_timerType_Duration_2").value = 1;
 	document.getElementById("txt_timerType_Duration_3").value = 10;
 	document.getElementById("txt_timerType_Duration_4").value = 30;
-	document.getElementById("txt_timerType_Duration_5").value = 45;
-	document.getElementById("txt_timerType_Duration_6").value = 60;
+	document.getElementById("txt_timerType_Duration_5").value = 30;
+	document.getElementById("txt_timerType_Duration_6").value = 30;
 
 	addTotalNumberOfTimers();
 
