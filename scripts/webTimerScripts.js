@@ -10,6 +10,11 @@ var CONST_LBL_FOR_TIMER_CONFIGURATION_SUFFIX = "  :";
 var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED = "Pause";
 var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_ENABLED = "Resume";
 
+var CONST_MESSAGE_FOR_USER_CONFIRMATION_PREFIX = "Do you want to ";
+var CONST_INPUT_FOR_USER_CONFIRMATION_ALLOW = "123";
+var CONST_MESSAGE_FOR_USER_CONFIRMATION_SUFFIX = "?\n Please enter " + CONST_INPUT_FOR_USER_CONFIRMATION_ALLOW + " to confirm.";
+var CONST_DEFAULT_INPUT_FOR_PROMPT = "000";
+
 var CONST_TYPE_FOR_TIMER_TYPE_DURATION = "number";
 var CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION = "text";
 
@@ -456,7 +461,10 @@ function togglePause()
 
 function resetTimers()
 {
+    var userConfirmationForSkip = getUserConfirmation("Reset");
 
+    if(!userConfirmationForSkip)
+        return false;
     var timersTableReset = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     for(i=1; i<timersTableReset.rows.length; i++)
     {
@@ -547,6 +555,11 @@ function isTableHavingValidTimerRemaining()
 
 function skipCurrentTimer()
 {
+    var userConfirmationForSkip = getUserConfirmation("Skip");
+
+    if(!userConfirmationForSkip)
+        return false;
+
     var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     var i=0;
     //Stopping all timers.
@@ -684,4 +697,15 @@ function toggleDarkModeByShortcutKey()
         document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked = true;
          enableDarkMode();
     }
+}
+
+function getUserConfirmation(userActionLabel)
+{
+    var promptMessage = CONST_MESSAGE_FOR_USER_CONFIRMATION_PREFIX + userActionLabel + CONST_MESSAGE_FOR_USER_CONFIRMATION_SUFFIX
+
+    var userResponse = prompt(promptMessage,CONST_DEFAULT_INPUT_FOR_PROMPT);
+    if(userResponse == CONST_INPUT_FOR_USER_CONFIRMATION_ALLOW)
+        return true;
+    else
+        return false;
 }
