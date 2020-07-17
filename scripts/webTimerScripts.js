@@ -664,23 +664,10 @@ function updatedExhaustedTimersInfo(originalTimerValueInHHmmSS, leftTimerValueIn
         var previousRowTimeStamp = exhaustedTimerTablePreviousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP].innerHTML;
         previousRowTimeStamp = new Date(previousRowTimeStamp).getTime();
         var timeStampDifference = currentTimeStamp.getTime() - previousRowTimeStamp;
-//        var userTimezoneOffset = currentTimeStamp.getTimezoneOffset() * 60 * 1000;
-//        timeStampDifference = new Date(timeStampDifference - userTimezoneOffset);
-//        timeStampDifference = new Date(timeStampDifference);
-//        alert("previousRowTimeStamp " + previousRowTimeStamp + "\n timeStampDifference" + timeStampDifference);
-//        var timeStampDifferenceHours = timeStampDifference / (1000 * 60 * 60);
-//        var timeStampDifferenceMinutes = timeStampDifference / (1000 * 60) - timeStampDifferenceHours;
-//        var timeStampDifferenceSeconds = timeStampDifference / (1000) - timeStampDifferenceMinutes;
-
-//        timeStampDifferenceHours = Math.round(timeStampDifferenceHours);
-//        timeStampDifferenceMinutes = Math.round(timeStampDifferenceMinutes);
-//        timeStampDifferenceSeconds = Math.round(timeStampDifferenceSeconds);
-
-            var timeStampDifferenceMinutes = timeStampDifference / (1000 * 60);
-            timeStampDifferenceMinutes = convertMinutesIntoHHMMMSSFormat(timeStampDifferenceMinutes);
+        var timeStampDifferenceMinutes = timeStampDifference / (1000 * 60);
+        timeStampDifferenceMinutes = convertMinutesIntoHHMMMSSFormat(timeStampDifferenceMinutes);
 
         var exhaustedTimerTableTimeStampDifference = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP_DIFFERENCE);
-//        exhaustedTimerTableTimeStampDifference.innerHTML = timeStampDifferenceHours + CONST_SYMBOL_FOR_TIME_SEPARATOR + timeStampDifferenceMinutes + CONST_SYMBOL_FOR_TIME_SEPARATOR + timeStampDifferenceSeconds;
         exhaustedTimerTableTimeStampDifference.innerHTML = timeStampDifferenceMinutes;
     }
 
