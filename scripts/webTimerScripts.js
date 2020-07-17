@@ -557,10 +557,10 @@ function isTableHavingValidTimerRemaining()
 
 function skipCurrentTimer()
 {
-//    var userConfirmationForSkip = getUserConfirmation("Skip");
-//
-//    if(!userConfirmationForSkip)
-//        return false;
+    var userConfirmationForSkip = getUserConfirmation("Skip");
+
+    if(!userConfirmationForSkip)
+        return false;
 
     var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     var i=0;
