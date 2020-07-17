@@ -44,6 +44,8 @@ var CONST_SYMBOL_FOR_TIME_SEPARATOR = ":";
 var CONST_TABLE_COLUMN_FOR_TABLE_INDEX = 0;
 var CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME= 1;
 var CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME= 2;
+var CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP= 3;
+var CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP_DIFFERENCE= 4;
 
 var CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS = 1000;
 
@@ -381,7 +383,7 @@ function runTimer(remainingTime, tableRowIndex, originalTime)
 
             if(tableRowIndex >= Current_Timer_Table_Row)
             {
-                updatedExhaustedTimersInfo(originalTime, Current_Timer_Table_Row)
+                updatedExhaustedTimersInfo(originalTime, remainingTime, Current_Timer_Table_Row)
                 Current_Timer_Table_Row++;
             }
 
@@ -570,7 +572,8 @@ function skipCurrentTimer()
     for(i=1; i<timerTable.rows.length; i++)
     {
         var timerTableRow = timerTable.rows[i];
-        var currentRowOriginalTime =  convertHHmmSSTimeToMinutes(timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML);
+        var currentRowOriginalTimeInHHmmSS = timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
+        var currentRowOriginalTime =  convertHHmmSSTimeToMinutes(currentRowOriginalTimeInHHmmSS);
         var currentRowRemainingTime =  convertHHmmSSTimeToMinutes(timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML);
         var currentRowElapsedTime =   parseFloat(currentRowOriginalTime) - parseFloat(currentRowRemainingTime);
         currentRowElapsedTime = convertMinutesIntoHHMMMSSFormat(currentRowElapsedTime);
@@ -578,7 +581,7 @@ function skipCurrentTimer()
         if(currentRowRemainingTime>0)
          {
 
-            updatedExhaustedTimersInfo(currentRowElapsedTime, Current_Timer_Table_Row);
+            updatedExhaustedTimersInfo(currentRowOriginalTimeInHHmmSS, currentRowElapsedTime, Current_Timer_Table_Row);
             currentRowRemainingTime = 0;
             timerTableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML = convertMinutesIntoHHMMMSSFormat(currentRowRemainingTime);
             Current_Timer_Table_Row++;
@@ -640,15 +643,34 @@ function updateRemainingTimesOfFollowingTimers(currentRunningTimerRowNo)
     }
 }
 
-function updatedExhaustedTimersInfo(timerValueInHHmmSS, timerRowNumber)
+function updatedExhaustedTimersInfo(originalTimerValueInHHmmSS, leftTimerValueInHHmmSS, timerRowNumber)
 {
     var exhaustedTimerTable = document.getElementById(CONST_ID_FOR_EXHAUSTED_TIMERS_TABLE);
     var exhaustedTimerTableRow = exhaustedTimerTable.insertRow(timerRowNumber);
     var exhaustedTimerTableIndexCell = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_INDEX);
-    var exhaustedTimerTableIndexExhaustedTimerValue = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME);
+    var exhaustedTimerTableIndexOriginalTimerValue = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME);
+    var exhaustedTimerTableIndexExhaustedTimerValue = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME);
+    var exhaustedTimerTableIndexTimeStampValue = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP);
 
-   exhaustedTimerTableIndexCell.innerHTML = timerRowNumber;
-   exhaustedTimerTableIndexExhaustedTimerValue.innerHTML = timerValueInHHmmSS;
+    exhaustedTimerTableIndexCell.innerHTML = timerRowNumber;
+    exhaustedTimerTableIndexOriginalTimerValue.innerHTML = originalTimerValueInHHmmSS;
+    exhaustedTimerTableIndexExhaustedTimerValue.innerHTML = leftTimerValueInHHmmSS;
+    var currentTimeStamp = new Date();
+    exhaustedTimerTableIndexTimeStampValue.innerHTML = currentTimeStamp;
+
+    if(timerRowNumber>1)
+    {
+        var exhaustedTimerTablePreviousRow = exhaustedTimerTable.rows[timerRowNumber-1];
+        var previousRowTimeStamp = exhaustedTimerTablePreviousRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP].innerHTML;
+        previousRowTimeStamp = new Date(previousRowTimeStamp).getTime();
+        var timeStampDifference = currentTimeStamp.getTime() - previousRowTimeStamp;
+        var timeStampDifferenceMinutes = timeStampDifference / (1000 * 60);
+        timeStampDifferenceMinutes = convertMinutesIntoHHMMMSSFormat(timeStampDifferenceMinutes);
+
+        var exhaustedTimerTableTimeStampDifference = exhaustedTimerTableRow.insertCell(CONST_TABLE_COLUMN_FOR_TABLE_TIME_STAMP_DIFFERENCE);
+        exhaustedTimerTableTimeStampDifference.innerHTML = timeStampDifferenceMinutes;
+    }
+
 //   alert("exhaustedTimerTableIndexExhaustedTimerValue : " + timerValueInHHmmSS);
 
 //    alert("timerTable.rows[timerRowNumber];" + timerTable.rows[timerRowNumber] );
