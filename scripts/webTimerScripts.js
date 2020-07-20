@@ -324,8 +324,7 @@ function startTimers()
 		var tableRow = timersTable.rows[i];
 		var originalTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_ORIGINAL_TIME].innerHTML;
 		var remainingTime = tableRow.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
-
-		runTimer(remainingTime,i,originalTime);
+        runTimer(remainingTime,i,originalTime);
 //		Current_Running_Timer = setInterval(runTimer(remainingTime,i),CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 
 	}
@@ -352,17 +351,35 @@ function runTimer(remainingTime, tableRowIndex, originalTime)
     var hours = hhMMss[0];
     var minutes = hhMMss[1];
     var seconds = hhMMss[2];
+    var timeStampPrevious = new Date().getMilliseconds();
+    var timeStampDifference =0, timeStampDelayedTimes = 0, timeStampAcceleratedTimes = 0, timeStampAccurateTimes=0, timeStampRunningIndex = 0;
+    var totalTimeDelayed = 0, totalTimeAccelerated = 0;
     Current_Running_Timer[tableRowIndex] = setInterval(function()
     {
 //        Current_Status_Of_Timer_Is_Timer_Running = prompt("Current_Status_Of_Timer_Is_Timer_Running :" + Current_Status_Of_Timer_Is_Timer_Running, Current_Status_Of_Timer_Is_Timer_Running);
+//        console.log("FIRST "+"timeStampDelayedTimes="+timeStampDelayedTimes+", timeStampAcceleratedTimes="+timeStampAcceleratedTimes);
+        var timerOffsetInMilliSeconds = totalTimeDelayed-totalTimeAccelerated;
+//        console.log("timerOffsetInMilliSeconds :"+timerOffsetInMilliSeconds+"\n");
+
         if(!Current_Status_Of_Timer_Is_Timer_Running)
         {
+
              stopCurrentRunningTimer(tableRowIndex);
 
         }
         else{
+
         if(seconds>0)
         {
+//            console.log("reducing 1 second of timer " + tableRowIndex );
+        if(timerOffsetInMilliSeconds!=0)
+         {
+            var timerOffsetInSeconds = parseInt(timerOffsetInMilliSeconds/1000);
+            seconds+=parseInt(timerOffsetInSeconds);
+            timerOffsetInMilliSeconds = timerOffsetInMilliSeconds - (timerOffsetInSeconds*1000);
+//            console.log(tableRowIndex+". "+newTime+"- timerOffsetInMilliSeconds :"+timerOffsetInMilliSeconds);
+         }
+
             seconds--;
         }
         else if(minutes>0)
@@ -397,6 +414,77 @@ function runTimer(remainingTime, tableRowIndex, originalTime)
         displayTimeInTable(newTime,tableRowIndex);
         }
         displayInTitle();
+        var timeStampCurrent = new Date().getMilliseconds();
+        timeStampDifference = timeStampCurrent - timeStampPrevious;
+//        console.log("timeStampDifference = timeStampCurrent - timeStampPrevious = "  + timeStampCurrent + "-" + timeStampPrevious + "="+(timeStampCurrent - timeStampPrevious));
+
+        timeStampPrevious = timeStampCurrent;
+        timeStampDifference = timeStampDifference - CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS;
+//        console.log("timeStampDifference :" + timeStampDifference);
+        if(timeStampDifference>0)
+         {
+            totalTimeDelayed+=timeStampDifference;
+            timeStampDelayedTimes++;
+//            timeStampDifference = "Timer slowed by " + timeStampDifference;
+//            console.log("Timer slowed, totalTimeDelayed = "+totalTimeDelayed);
+
+
+         }
+        else if (timeStampDifference <0)
+        {
+           totalTimeAccelerated+=Math.abs(timeStampDifference);
+           timeStampAcceleratedTimes++;
+//           timeStampDifference = "Timer accelerated by " + timeStampDifference;
+//           console.log("Timer accelerated, totalTimeAccelerated = "+totalTimeAccelerated);
+        }
+        else
+        {
+//            console.log("Timer correct, timeStampDifference= " +timeStampDifference);
+//            timeStampDifference = "Timer is accurate";
+            timeStampAccurateTimes++;
+
+        }
+//        console.log("MIDDLE "+"timeStampDelayedTimes="+timeStampDelayedTimes+", timeStampAcceleratedTimes="+timeStampAcceleratedTimes);
+
+        var timeStampAcceleratedDelayedDifference = timeStampDelayedTimes-timeStampAcceleratedTimes;
+        if(timeStampAcceleratedDelayedDifference >0 )
+            timeStampAcceleratedDelayedDifference = timeStampAcceleratedDelayedDifference + " Delay is more";
+        else if(timeStampAcceleratedDelayedDifference<0)
+            timeStampAcceleratedDelayedDifference = timeStampAcceleratedDelayedDifference + " Accelerated is more";
+        else
+            timeStampAcceleratedDelayedDifference = timeStampAcceleratedDelayedDifference + " Both have cancelled out ";
+
+        timeStampRunningIndex++;
+        timeStampDifference = timeStampRunningIndex + " " + timeStampDifference;
+        timeStampDifference = timeStampDifference + " Delayed #:"+timeStampDelayedTimes;
+        timeStampDifference = timeStampDifference + " Accelerated #:"+timeStampAcceleratedTimes;
+        timeStampDifference = timeStampDifference + " Accurate #:"+timeStampAccurateTimes;
+        timeStampDifference = timeStampDifference + timeStampAcceleratedDelayedDifference;
+//        console.log("Time shifted by "+totalTimeDelayed+"-"+totalTimeAccelerated+"="+(totalTimeDelayed-totalTimeAccelerated));
+        if(isNaN(totalTimeAccelerated-totalTimeDelayed))
+        {
+            if(isNaN(totalTimeAccelerated) && !isNaN(totalTimeDelayed))
+            {
+                timeStampDifference = timeStampDifference + " totalTimeAccelerated is NaN";
+            }
+            else if(!isNaN(totalTimeAccelerated) && isNaN(totalTimeDelayed))
+            {
+                timeStampDifference = timeStampDifference + " totalTimeDelayed is NaN";
+            }
+            else
+                timeStampDifference = timeStampDifference + "both Delayed and Accelerated is NaN";
+        }
+        else
+        {
+            timeStampDifference = timeStampDifference + " Timer Offset #:" + (totalTimeAccelerated-totalTimeDelayed);
+        }
+//        var TS = window.performance.timing.navigationStart + window.performance.now();
+//        console.log(timeStampDifference);
+//        console.log("Current Timestamp of timer "+tableRowIndex + " is :"+ currentTime +CONST_SYMBOL_FOR_TIME_SEPARATOR+ currentTime.getMilliseconds() + CONST_SYMBOL_FOR_TIME_SEPARATOR + window.performance.now());
+//        console.log("LAST "+"timeStampDelayedTimes="+timeStampDelayedTimes+", timeStampAcceleratedTimes="+timeStampAcceleratedTimes);
+         console.log(tableRowIndex+". "+newTime+"- timerOffsetInMilliSeconds :"+timerOffsetInMilliSeconds);
+        if(tableRowIndex == 16)
+            console.log("\n")
     }, CONST_TIMER_UPDATE_FREQUENCY_MILLISECONDS);
 //    CONST_CURRENT_TIMER_TABLE_ROW++;
 //    }
@@ -463,10 +551,10 @@ function togglePause()
 
 function resetTimers()
 {
-    var userConfirmationForSkip = getUserConfirmation("Reset");
-
-    if(!userConfirmationForSkip)
-        return false;
+//    var userConfirmationForSkip = getUserConfirmation("Reset");
+//
+//    if(!userConfirmationForSkip)
+//        return false;
     var timersTableReset = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     for(i=1; i<timersTableReset.rows.length; i++)
     {
@@ -557,10 +645,10 @@ function isTableHavingValidTimerRemaining()
 
 function skipCurrentTimer()
 {
-    var userConfirmationForSkip = getUserConfirmation("Skip");
-
-    if(!userConfirmationForSkip)
-        return false;
+//    var userConfirmationForSkip = getUserConfirmation("Skip");
+//
+//    if(!userConfirmationForSkip)
+//        return false;
 
     var timerTable = document.getElementById(CONST_ID_FOR_TIMERS_TABLE);
     var i=0;

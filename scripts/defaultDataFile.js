@@ -9,12 +9,14 @@ var CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME= 2;
 */
 
 var CONST_DEFAULT_TIME_SEQUENCE_TO_BE_LOADED = [1, 30, 1, 30, 1, 30, 1, 30, 10, 30, 1, 30, 1, 30, 1, 30];
+//var CONST_DEFAULT_TIME_SEQUENCE_TO_BE_LOADED = [0.1];
 
 function loadDefaultValues()
 {
     loadDefaultTimerTypes();
     loadDefaultTimerValues();
 //    enableKeyBoardShortcuts();
+    startTimers();
 }
 
 function loadDefaultTimerValues()
