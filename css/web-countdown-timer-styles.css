@@ -1,9 +1,11 @@
 .bigTimer {
-
     padding-left: 30%;
     font-size: 300%;
 }
 
+#div_timersConfiguration label{
+    margin-right: 25px;
+}
 
 .div_timer_configuration_label_0{
     background :  #cce6ff;
@@ -55,4 +57,100 @@
  border-spacing: 10px;
  border-collapse: separate;
  text-align : center;
+}
+
+table td, th{
+    padding-left: 15px;
+}
+
+.divBoundary {
+    border: 1px solid #ccc2c2;
+    padding: 5px;
+    display: flex;
+    gap: 10px; /* Add space between buttons */
+}
+
+.divBoundary input[type="button"] {
+    flex: 1; /* Make buttons take equal width */
+    margin: 0; /* Remove default margin */
+}
+
+.btnSmall {
+    height: 30px; /* Maintain consistent height with other buttons */
+    margin: 0; /* Remove default margin */
+    flex: none; /* Override flex property to prevent equal width */
+}
+
+#div_timersConfiguration {
+    margin-top: 10px;
+}
+
+main {
+    margin-bottom: 60px;
+}
+
+footer {
+    /*display: flex;*/
+    background: #87ceeb;
+    text-align: center;
+    height: 20px;
+    width: 100vw;
+    padding: 20px;
+    bottom: 0;
+    position: fixed;
+}
+
+.divFooterCenter {
+    display: inline-block;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.divFooterRight {
+    display: inline-block;
+    float: right;
+    margin-right: 80px;
+}
+
+/* CSS styles for the toast */
+.toast {
+    background-color: #fd1000; /* Red background color */
+    color: white;
+    padding: 10px;
+    padding-top: 50px;
+    border-radius: 8px;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* High z-index to overlay other content */
+    text-align: center;
+    font-size: 24px;
+}
+
+.toastCloseButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    font-size:16px;
+    color: black;
+}
+
+
+/* Style for the toast content */
+.toast-content {
+    font-size: 16px;
+}
+
+.green {
+    background: #9fff80;
+}
+
+.yellow {
+    background: yellow;
+}
+
+.red {
+    background: red;
 }
