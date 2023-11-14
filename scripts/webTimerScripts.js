@@ -4,7 +4,7 @@ Constants values
 var CONST_LBL_FOR_TIMER_DURATION = "Timer Duration";
 var CONST_LBL_FOR_TIMER_TYPE_DESCRIPTION = "Timer Description";
 var CONST_LBL_FOR_TIMER_TYPE_VALUE = "Duration ";
-var CONST_LBL_FOR_TIMER_CONFIGURATION = "Timer ";
+var CONST_LBL_FOR_TIMER_CONFIGURATION = "Time Slot ";
 var CONST_LBL_FOR_TIMER_CONFIGURATION_SUFFIX = "  :";
 
 var CONST_TXT_FOR_PAUSE_BUTTON_WHEN_PAUSE_DISABLED = "Pause";
@@ -63,6 +63,8 @@ var Current_Status_Of_Pause_Is_Paused_Enabled = false;
 var Current_Status_Of_Timer_Is_Timer_Running = false;
 var Current_Status_Of_Timer_Was_It_Started = false;
 
+const MSG_PLACEHOLDER_DURATION = "Duration in minutes";
+
 function addTotalNumberOfTimers()
 {
 	
@@ -86,12 +88,13 @@ function createLabelTagWithIndex(index, cssClass, text, forRadioButtonID)
 	return (labelTag );
 }
 
-function createTextFieldTagWithIndex(index, cssClass, type, onChangeFunctionName, onChangeFunctionNameParamater1, onChangeFunctionNameParamater2)
+function createTextFieldTagWithIndex(index, cssClass, type, onChangeFunctionName, onChangeFunctionNameParamater1, onChangeFunctionNameParamater2, placeholder)
 {
 	var inputTextFieldTag = "<input type=\""+ type + "\" id=\"" + CONST_TEXT_FIELD_PREFIX + index + "\" class=\"" + cssClass + "\"";
 	inputTextFieldTag = inputTextFieldTag.concat(" onChange=\"");
 	inputTextFieldTag = inputTextFieldTag.concat(createFunctionStringWithParameters(onChangeFunctionName, onChangeFunctionNameParamater1, onChangeFunctionNameParamater2));
 	inputTextFieldTag = inputTextFieldTag.concat("\"");
+    inputTextFieldTag = inputTextFieldTag.concat(" placeholder=\"" + placeholder + "\"");
 	inputTextFieldTag = inputTextFieldTag.concat(" onClick=\"this.select();\" >");
 	return (inputTextFieldTag);
 }
@@ -112,7 +115,7 @@ function createTimerConfigurationEntry(index)
 	
 	var radiobuttonsTag = createRadioButtonTagsForEachTimerTypes("timerType_" + (index));
 	
-	var inputTag = createTextFieldTagWithIndex( "timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DURATION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING );
+	var inputTag = createTextFieldTagWithIndex( "timerDurationIndex_" + index, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DURATION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING, MSG_PLACEHOLDER_DURATION);
 	return (labelTag + radiobuttonsTag+ inputTag + CONST_TAG_LINE_BREAK);
 }
 
@@ -169,10 +172,10 @@ function addTotalNumberOfTimerTypes()
 	for (i=0; i<totalNumberOfTimerTypes; i++)
 	{
 		var labelDescription = createLabelTagWithIndex("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_TYPE_DESCRIPTION, CONST_TEXT_FIELD_PREFIX + "timerType_Description_" + i);
-		var textFieldDescription = createTextFieldTagWithIndex ("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING);
-		
+		var textFieldDescription = createTextFieldTagWithIndex ("timerType_Description_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DESCRIPTION, CONST_FUNCTION_TEXTFIELD_CHANGE, CONST_EMPTY_STRING, CONST_EMPTY_STRING, CONST_EMPTY_STRING);
+
 		var labelDuration = createLabelTagWithIndex("timerType_Duration_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_LBL_FOR_TIMER_DURATION, CONST_TEXT_FIELD_PREFIX + "timerType_Duration_" + i);
-		var textFieldDuration = createTextFieldTagWithIndex ("timerType_Duration_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DURATION);
+		var textFieldDuration = createTextFieldTagWithIndex ("timerType_Duration_" + i, CONST_CSS_CLASS_FOR_TIMER_CONFIGURATION_ELEMENTS, CONST_TYPE_FOR_TIMER_TYPE_DURATION, CONST_EMPTY_STRING);
 		
 		timerTypeConfigurationDiv.innerHTML+= labelDescription + textFieldDescription;
 		timerTypeConfigurationDiv.innerHTML+= labelDuration + textFieldDuration;
@@ -419,6 +422,24 @@ function displayInTitle()
     document.title = tableRowForDisplaying.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
     document.getElementById(CONST_ID_FOR_LABEL_BIGGER_TIMER_DISPLAY).innerHTML = tableRowForDisplaying.cells[CONST_TABLE_COLUMN_FOR_TABLE_REMAINING_TIME].innerHTML;
 
+}
+
+/**
+ * Function to randomly play any of the audio sound.
+ */
+function playTimerEndedSound()
+{
+    const soundFiles = [
+        CONST_FILE_PATH_SOUND_1,
+        CONST_FILE_PATH_SOUND_2,
+        CONST_FILE_PATH_SOUND_3
+    ];
+
+    const randomIndex = Math.floor(Math.random() * soundFiles.length);
+    var soundElement = document.createElement("audio");
+    soundElement.src = soundFiles[randomIndex];
+    document.body.appendChild(soundElement);
+    soundElement.play();
 }
 
 function playTimerEndedSound(timerTableRowIndex)

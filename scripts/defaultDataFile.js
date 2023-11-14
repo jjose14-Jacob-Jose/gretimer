@@ -72,15 +72,13 @@ function loadDefaultTimerTypes()
 
 	addTotalNumberOfTimerTypes();
 
-
-	document.getElementById("txt_timerType_Description_0").value = "Settling Down";
-	document.getElementById("txt_timerType_Description_1").value = "AWA";
-	document.getElementById("txt_timerType_Description_2").value = "Break Short";
-	document.getElementById("txt_timerType_Description_3").value = "Break Long";
-	document.getElementById("txt_timerType_Description_4").value = "Verbal";
-	document.getElementById("txt_timerType_Description_5").value = "Quantitative";
-	document.getElementById("txt_timerType_Description_6").value = "Analytical";
-
+	document.getElementById("txt_timerType_Description_0").value = "Settling Down (1 min)";
+	document.getElementById("txt_timerType_Description_1").value = "AWA (30 min)";
+	document.getElementById("txt_timerType_Description_2").value = "Break Short (1 min)";
+	document.getElementById("txt_timerType_Description_3").value = "Break Long (10 min)";
+	document.getElementById("txt_timerType_Description_4").value = "Verbal (30 min)";
+	document.getElementById("txt_timerType_Description_5").value = "Quantitative (30 min)";
+	document.getElementById("txt_timerType_Description_6").value = "Analytical (30 min)";
 
 	document.getElementById("txt_timerType_Duration_0").value = 1;
 	document.getElementById("txt_timerType_Duration_1").value = 30;
