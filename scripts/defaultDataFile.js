@@ -12,6 +12,7 @@ var CONST_DEFAULT_TIME_SEQUENCE_TO_BE_LOADED = [1, 30, 1, 30, 1, 30, 1, 30, 10, 
 
 function loadDefaultValues()
 {
+	saveToApm("Timer Application initialized.");
     loadDefaultTimerTypes();
     loadDefaultTimerValues();
 //    enableKeyBoardShortcuts();

@@ -67,10 +67,9 @@ const MSG_PLACEHOLDER_DURATION = "Enter Duration in Minutes";
 
 function addTotalNumberOfTimers()
 {
-	
 	var totalNumberOfTimers = document.getElementById("txt_totalNumberOfTimers").value;
 	var timerConfigurationDiv = document.getElementById("div_timersConfiguration");
-	
+    saveToApm("Creating additional timers. Count: " + totalNumberOfTimers);
 	
 	//Removing all existing timers
 	timerConfigurationDiv.innerHTML = "";
@@ -203,6 +202,7 @@ function radioButtonChangeFunction(radioButtonName, radioButtonValue)
 
 function loadSpecifiedTimerToTable()
 {
+    saveToApm("Loading the custom timeslots to main timer.");
     Current_Status_Of_Timer_Is_Timer_Running = false;
 	var totalNumberOfTimers = document.getElementById("txt_totalNumberOfTimers").value;
 	var timers = [];
@@ -306,6 +306,7 @@ function stopCurrentRunningTimer(intervalID)
 }
 function startTimers()
 {
+    saveToApm("Starting timers");
 //    if(isButtonDisabled(CONST_ID_FOR_BTN_START_TIMER))
 //    {
 //        Current_Running_Timer = 1;
@@ -467,6 +468,7 @@ function playTimerEndedSound(timerTableRowIndex)
 
 function togglePause()
 {
+    saveToApm("Pause timers");
 //    if(Current_Status_Of_Timer_Is_Timer_Running)
 //    {
    if(Current_Status_Of_Pause_Is_Paused_Enabled)
@@ -491,6 +493,7 @@ function togglePause()
 
 function resetTimers()
 {
+    saveToApm("Resetting timers");
     var userConfirmationForSkip = getUserConfirmation("Reset");
 
     if(!userConfirmationForSkip)
@@ -585,6 +588,7 @@ function isTableHavingValidTimerRemaining()
 
 function skipCurrentTimer()
 {
+    saveToApm("Skipping current timer");
     var userConfirmationForSkip = getUserConfirmation("Skip");
 
     if(!userConfirmationForSkip)
@@ -721,6 +725,7 @@ function clearTableContents(tableId)
 function enableDarkMode()
 {
 
+    saveToApm("Enabling Dark Mode");
     if(document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked)
      {
           document.getElementsByTagName("BODY")[0].setAttribute("class", "darkMode")
@@ -735,6 +740,7 @@ function enableDarkMode()
 
 function toggleDarkModeByShortcutKey()
 {
+    saveToApm("Toggling Dark mode");
     if(document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked)
     {
         document.getElementById(CONST_ID_FOR_CB_ENABLE_DARK_MODE).checked = false;
