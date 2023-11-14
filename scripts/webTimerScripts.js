@@ -63,7 +63,7 @@ var Current_Status_Of_Pause_Is_Paused_Enabled = false;
 var Current_Status_Of_Timer_Is_Timer_Running = false;
 var Current_Status_Of_Timer_Was_It_Started = false;
 
-const MSG_PLACEHOLDER_DURATION = "Duration in minutes";
+const MSG_PLACEHOLDER_DURATION = "Enter Duration in Minutes";
 
 function addTotalNumberOfTimers()
 {
@@ -95,6 +95,7 @@ function createTextFieldTagWithIndex(index, cssClass, type, onChangeFunctionName
 	inputTextFieldTag = inputTextFieldTag.concat(createFunctionStringWithParameters(onChangeFunctionName, onChangeFunctionNameParamater1, onChangeFunctionNameParamater2));
 	inputTextFieldTag = inputTextFieldTag.concat("\"");
     inputTextFieldTag = inputTextFieldTag.concat(" placeholder=\"" + placeholder + "\"");
+    inputTextFieldTag = inputTextFieldTag.concat(" style=\"width:200px;\"");
 	inputTextFieldTag = inputTextFieldTag.concat(" onClick=\"this.select();\" >");
 	return (inputTextFieldTag);
 }
@@ -119,6 +120,11 @@ function createTimerConfigurationEntry(index)
 	return (labelTag + radiobuttonsTag+ inputTag + CONST_TAG_LINE_BREAK);
 }
 
+/**
+ * Create an HTML radio-button
+ * @param radioButtonName name of the radio-button
+ * @returns {string|boolean} JavaScript String containing HTML tag for the radio button.
+ */
 function createRadioButtonTagsForEachTimerTypes (radioButtonName)
 {
 	var noOfCustomTimerTypes = document.getElementById("txt_totalNumberOfTimerTypes").value;
@@ -148,8 +154,10 @@ function createRadioButtonTagWithLabel(index, cssClass, labelText, rbValue, name
 	radioButtonTag = radioButtonTag.concat("name=\"" + name + "\" ");
 	radioButtonTag = radioButtonTag.concat("class=\"" + cssClass + "\" ");
 	radioButtonTag = radioButtonTag.concat("value=\"" + rbValue + "\" ");
-	
-	radioButtonTag = radioButtonTag.concat("onChange=\"" + onChangeFunction + "(");
+
+    if (onChangeFunction != null)
+	    radioButtonTag = radioButtonTag.concat("onChange=\"" + onChangeFunction + "(");
+
 	radioButtonTag = radioButtonTag.concat("'" + name + "\'");
 	radioButtonTag = radioButtonTag.concat(",'" + rbValue + "'");
 	radioButtonTag = radioButtonTag.concat(")\"");
@@ -190,8 +198,7 @@ function radioButtonChangeFunction(radioButtonName, radioButtonValue)
 	radioButtonId = radioButtonId[1];
 	var radioButtonsTextFieldId = "txt_timerDurationIndex_" + radioButtonId;
 	document.getElementById(radioButtonsTextFieldId).value = radioButtonValue;
-	loadSpecifiedTimerToTable();
-
+	// loadSpecifiedTimerToTable();
 }
 
 function loadSpecifiedTimerToTable()
