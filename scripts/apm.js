@@ -30,10 +30,10 @@ async function saveToApm (message) {
 
         if (response.ok) {
             // const responseData = await response.json();
-            console.log('Successfully connected to APM. Connection status: ', response);
+            // console.log('Successfully connected to APM. Connection status: ', response);
             // return responseData;
         } else {
-            console.error('Error in response from APM. Connection status: ', response.status);
+            // console.error('Error in response from APM. Connection status: ', response.status);
             return null;
         }
     } catch (error) {
